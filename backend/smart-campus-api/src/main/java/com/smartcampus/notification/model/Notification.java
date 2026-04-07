@@ -1,17 +1,18 @@
 package com.smartcampus.notification.model;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "notifications")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Notification {
 
     @Id
@@ -36,4 +37,74 @@ public class Notification {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public Notification() {
+    }
+
+    public Notification(Long id, Long userId, NotificationType type, String message,
+                        Long referenceId, Boolean isRead, LocalDateTime createdAt) {
+        this.id = id;
+        this.userId = userId;
+        this.type = type;
+        this.message = message;
+        this.referenceId = referenceId;
+        this.isRead = isRead;
+        this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Long getReferenceId() {
+        return referenceId;
+    }
+
+    public Boolean getIsRead() {
+        return isRead;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setType(NotificationType type) {
+        this.type = type;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setReferenceId(Long referenceId) {
+        this.referenceId = referenceId;
+    }
+
+    public void setIsRead(Boolean isRead) {
+        this.isRead = isRead;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

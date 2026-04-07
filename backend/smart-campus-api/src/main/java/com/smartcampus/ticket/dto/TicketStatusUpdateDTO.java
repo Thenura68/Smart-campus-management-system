@@ -1,10 +1,16 @@
 package com.smartcampus.ticket.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-
-@Data
 public class TicketStatusUpdateDTO {
-    @NotBlank
     private String status;
+
+    public TicketStatusUpdateDTO() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

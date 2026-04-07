@@ -1,10 +1,16 @@
 package com.smartcampus.ticket.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-
-@Data
 public class CommentCreateDTO {
-    @NotBlank
     private String message;
+
+    public CommentCreateDTO() {
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

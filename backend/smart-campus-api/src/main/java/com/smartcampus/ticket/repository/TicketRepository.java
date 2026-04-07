@@ -1,10 +1,11 @@
 package com.smartcampus.ticket.repository;
 
-import com.smartcampus.ticket.model.Ticket;
-import com.smartcampus.ticket.model.TicketStatus;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import com.smartcampus.ticket.model.Ticket;
+import com.smartcampus.ticket.model.TicketStatus;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByCreatedByOrderByCreatedAtDesc(Long createdBy);

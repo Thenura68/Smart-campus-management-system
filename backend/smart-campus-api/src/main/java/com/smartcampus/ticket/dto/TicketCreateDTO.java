@@ -1,18 +1,43 @@
 package com.smartcampus.ticket.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-
-@Data
 public class TicketCreateDTO {
-    @NotBlank
     private String title;
-
-    @NotBlank
     private String description;
-
-    @NotBlank
     private String priority;
-
     private Long resourceId;
+
+    public TicketCreateDTO() {
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public Long getResourceId() {
+        return resourceId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setResourceId(Long resourceId) {
+        this.resourceId = resourceId;
+    }
 }

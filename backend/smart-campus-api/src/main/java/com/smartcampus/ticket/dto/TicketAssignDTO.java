@@ -1,10 +1,16 @@
 package com.smartcampus.ticket.dto;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-
-@Data
 public class TicketAssignDTO {
-    @NotNull
     private Long technicianId;
+
+    public TicketAssignDTO() {
+    }
+
+    public Long getTechnicianId() {
+        return technicianId;
+    }
+
+    public void setTechnicianId(Long technicianId) {
+        this.technicianId = technicianId;
+    }
 }
