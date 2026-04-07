@@ -1,3 +1,6 @@
 # OS files (Mac)
 
+target/
 .DS_Store
+.vscode/
+*.log
