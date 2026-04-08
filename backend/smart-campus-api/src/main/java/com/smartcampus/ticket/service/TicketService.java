@@ -14,4 +14,12 @@ public interface TicketService {
     TicketResponseDTO getTicketById(Long ticketId, Long currentUserId);
 
     List<TicketResponseDTO> getAllTickets();
+
+    void assignTechnician(Long ticketId, Long technicianId);
+
+    List<TicketResponseDTO> getAssignedTickets(Long technicianId);
+
+    void updateTicketStatus(Long ticketId, String status, Long technicianId);
+
+    void updateResolution(Long ticketId, String resolutionNotes, Long technicianId);
 }

@@ -74,6 +74,62 @@ public class TicketServiceImpl implements TicketService {
         return responseList;
     }
 
+    @Override
+    public void assignTechnician(Long ticketId, Long technicianId) {
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        ticket.setAssignedTo(technicianId);
+        ticket.setStatus(TicketStatus.ASSIGNED);
+        ticket.setUpdatedAt(LocalDateTime.now());
+
+        ticketRepository.save(ticket);
+    }
+
+    @Override
+    public List<TicketResponseDTO> getAssignedTickets(Long technicianId) {
+        List<Ticket> tickets = ticketRepository.findByAssignedToOrderByCreatedAtDesc(technicianId);
+        List<TicketResponseDTO> responseList = new ArrayList<>();
+
+        for (Ticket ticket : tickets) {
+            responseList.add(mapToResponseDTO(ticket));
+        }
+
+        return responseList;
+    }
+
+    @Override
+    public void updateTicketStatus(Long ticketId, String status, Long technicianId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        if (ticket.getAssignedTo() == null || !ticket.getAssignedTo().equals(technicianId)) {
+            throw new RuntimeException("This ticket is not assigned to this technician");
+        }
+
+        ticket.setStatus(TicketStatus.valueOf(status.toUpperCase()));
+        ticket.setUpdatedAt(LocalDateTime.now());
+
+        ticketRepository.save(ticket);
+    }
+
+    @Override
+    public void updateResolution(Long ticketId, String resolutionNotes, Long technicianId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        if (ticket.getAssignedTo() == null || !ticket.getAssignedTo().equals(technicianId)) {
+            throw new RuntimeException("This ticket is not assigned to this technician");
+        }
+
+        ticket.setResolutionNotes(resolutionNotes);
+        ticket.setUpdatedAt(LocalDateTime.now());
+
+        ticketRepository.save(ticket);
+    }
+
+
     private TicketResponseDTO mapToResponseDTO(Ticket ticket) {
         TicketResponseDTO dto = new TicketResponseDTO();
         dto.setId(ticket.getId());
