@@ -1,6 +1,20 @@
-# OS files (Mac)
-
+# Maven / Java build files
 target/
+*.class
+*.jar
+*.war
+
+# Mac OS
 .DS_Store
+
+# VS Code
 .vscode/
+
+# Logs
 *.log
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
