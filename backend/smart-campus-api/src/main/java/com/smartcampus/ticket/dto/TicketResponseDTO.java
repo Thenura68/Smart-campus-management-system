@@ -1,8 +1,10 @@
 package com.smartcampus.ticket.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class TicketResponseDTO {
+
     private Long id;
     private String title;
     private String description;
@@ -15,94 +17,56 @@ public class TicketResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private List<String> images; 
+
     public TicketResponseDTO() {
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getTitle() { return title; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getDescription() { return description; }
 
-    public String getPriority() {
-        return priority;
-    }
+    public String getPriority() { return priority; }
 
-    public String getStatus() {
-        return status;
-    }
+    public String getStatus() { return status; }
 
-    public Long getCreatedBy() {
-        return createdBy;
-    }
+    public Long getCreatedBy() { return createdBy; }
 
-    public Long getResourceId() {
-        return resourceId;
-    }
+    public Long getResourceId() { return resourceId; }
 
-    public Long getAssignedTo() {
-        return assignedTo;
-    }
+    public Long getAssignedTo() { return assignedTo; }
 
-    public String getResolutionNotes() {
-        return resolutionNotes;
-    }
+    public String getResolutionNotes() { return resolutionNotes; }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public List<String> getImages() { return images; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public void setId(Long id) { this.id = id; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public void setPriority(String priority) { this.priority = priority; }
 
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
+    public void setStatus(String status) { this.status = status; }
 
-    public void setResourceId(Long resourceId) {
-        this.resourceId = resourceId;
-    }
+    public void setCreatedBy(Long createdBy) { this.createdBy = createdBy; }
 
-    public void setAssignedTo(Long assignedTo) {
-        this.assignedTo = assignedTo;
-    }
+    public void setResourceId(Long resourceId) { this.resourceId = resourceId; }
 
-    public void setResolutionNotes(String resolutionNotes) {
-        this.resolutionNotes = resolutionNotes;
-    }
+    public void setAssignedTo(Long assignedTo) { this.assignedTo = assignedTo; }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public void setResolutionNotes(String resolutionNotes) { this.resolutionNotes = resolutionNotes; }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public void setImages(List<String> images) { this.images = images; }
 }

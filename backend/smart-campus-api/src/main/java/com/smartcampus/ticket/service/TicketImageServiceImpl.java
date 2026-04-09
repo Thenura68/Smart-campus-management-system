@@ -12,22 +12,30 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.smartcampus.ticket.dto.TicketImageResponseDTO;
+import com.smartcampus.ticket.model.Ticket;
 import com.smartcampus.ticket.model.TicketImage;
 import com.smartcampus.ticket.repository.TicketImageRepository;
+import com.smartcampus.ticket.repository.TicketRepository;
+
 
 @Service
 public class TicketImageServiceImpl implements TicketImageService {
 
     private final TicketImageRepository ticketImageRepository;
+    private final TicketRepository ticketRepository;
 
     private static final String UPLOAD_DIR = "uploads/tickets";
 
-    public TicketImageServiceImpl(TicketImageRepository ticketImageRepository) {
+    public TicketImageServiceImpl(TicketImageRepository ticketImageRepository,TicketRepository ticketRepository) {
         this.ticketImageRepository = ticketImageRepository;
-    }
+        this.ticketRepository = ticketRepository;
+    }   
 
     @Override
     public List<TicketImage> uploadImages(Long ticketId, List<MultipartFile> files) {
+
+        System.out.println("Files received: " + (files == null ? 0 : files.size()));
 
         if (files == null || files.isEmpty()) {
             return List.of();
@@ -67,7 +75,7 @@ public class TicketImageServiceImpl implements TicketImageService {
                 TicketImage image = new TicketImage();
                 image.setTicketId(ticketId);
                 image.setFileName(originalFileName);
-                image.setFilePath(targetPath.toString());
+                image.setFilePath("uploads/tickets/" + safeFileName);
                 image.setFileSize(file.getSize());
                 image.setUploadedAt(LocalDateTime.now());
 
@@ -83,7 +91,30 @@ public class TicketImageServiceImpl implements TicketImageService {
     }
 
     @Override
-    public List<TicketImage> getImagesByTicketId(Long ticketId) {
-        return ticketImageRepository.findByTicketId(ticketId);
+    public List<TicketImageResponseDTO> getImagesByTicketId(Long ticketId, Long currentUserId) {
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        if (!ticket.getCreatedBy().equals(currentUserId)) {
+            throw new RuntimeException("You cannot access images of this ticket");
+        }
+
+        List<TicketImage> images = ticketImageRepository.findByTicketId(ticketId);
+        List<TicketImageResponseDTO> responseList = new ArrayList<>();
+
+        for (TicketImage image : images) {
+            TicketImageResponseDTO dto = new TicketImageResponseDTO();
+            dto.setId(image.getId());
+            dto.setTicketId(image.getTicketId());
+            dto.setFileName(image.getFileName());
+            dto.setImageUrl("http://localhost:8080/" + image.getFilePath());
+            dto.setFileSize(image.getFileSize());
+            dto.setUploadedAt(image.getUploadedAt() != null ? image.getUploadedAt().toString() : null);
+
+            responseList.add(dto);
+        }
+
+        return responseList;
     }
 }

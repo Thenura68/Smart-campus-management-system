@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.smartcampus.ticket.dto.TicketCreateDTO;
+import com.smartcampus.ticket.dto.TicketImageResponseDTO;
 import com.smartcampus.ticket.dto.TicketResponseDTO;
 import com.smartcampus.ticket.service.TicketImageService;
 import com.smartcampus.ticket.service.TicketService;
@@ -33,14 +34,21 @@ public class TicketUserController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<TicketResponseDTO> createTicket(
             @ModelAttribute TicketCreateDTO dto,
-            @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+            @RequestPart(value = "images", required = false) MultipartFile[] images) {
 
-        Long currentUserId = 2L; // temporary for testing
+        Long currentUserId = 2L;
+
+        System.out.println("Images received in controller: " + (images == null ? 0 : images.length));
+        if (images != null) {
+            for (MultipartFile image : images) {
+                System.out.println("Controller file: " + image.getOriginalFilename());
+            }
+        }
 
         TicketResponseDTO createdTicket = ticketService.createTicket(dto, currentUserId);
 
-        if (images != null && !images.isEmpty()) {
-            ticketImageService.uploadImages(createdTicket.getId(), images);
+        if (images != null && images.length > 0) {
+            ticketImageService.uploadImages(createdTicket.getId(), java.util.Arrays.asList(images));
         }
 
         return ResponseEntity.ok(createdTicket);
@@ -48,13 +56,37 @@ public class TicketUserController {
 
     @GetMapping
     public ResponseEntity<List<TicketResponseDTO>> getMyTickets() {
-        Long currentUserId = 2L; // temporary for testing
+        Long currentUserId = 2L;
         return ResponseEntity.ok(ticketService.getMyTickets(currentUserId));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TicketResponseDTO> getTicketById(@PathVariable Long id) {
-        Long currentUserId = 2L; // temporary for testing
+        Long currentUserId = 2L;
         return ResponseEntity.ok(ticketService.getTicketById(id, currentUserId));
     }
+
+    @GetMapping("/{id}/images")
+    public ResponseEntity<List<TicketImageResponseDTO>> getTicketImages(@PathVariable Long id) {
+        Long currentUserId = 2L;
+        return ResponseEntity.ok(ticketImageService.getImagesByTicketId(id, currentUserId));
+    }
+
+
+//TEMPORARYYYYyyy
+    @PostMapping(value = "/test-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> testUpload(
+            @RequestPart(value = "images", required = false) MultipartFile[] images) {
+
+        System.out.println("TEST images count = " + (images == null ? 0 : images.length));
+
+        if (images != null) {
+            for (MultipartFile file : images) {
+                System.out.println("TEST file = " + file.getOriginalFilename());
+            }
+        }
+
+        return ResponseEntity.ok("received = " + (images == null ? 0 : images.length));
+    }
+
 }
