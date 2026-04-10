@@ -23,33 +23,22 @@ public class Notification {
     private Long userId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private NotificationType type;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
     @Column(name = "reference_id")
     private Long referenceId;
 
-    @Column(name = "is_read")
-    private Boolean isRead;
+    @Column(name = "is_read", nullable = false)
+    private Boolean isRead = false;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     public Notification() {
-    }
-
-    public Notification(Long id, Long userId, NotificationType type, String message,
-                        Long referenceId, Boolean isRead, LocalDateTime createdAt) {
-        this.id = id;
-        this.userId = userId;
-        this.type = type;
-        this.message = message;
-        this.referenceId = referenceId;
-        this.isRead = isRead;
-        this.createdAt = createdAt;
     }
 
     public Long getId() {

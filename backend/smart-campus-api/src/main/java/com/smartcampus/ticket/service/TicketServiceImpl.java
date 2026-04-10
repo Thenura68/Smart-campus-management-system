@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.smartcampus.notification.model.NotificationType;
+import com.smartcampus.notification.service.NotificationService;
 import com.smartcampus.ticket.dto.TicketCreateDTO;
 import com.smartcampus.ticket.dto.TicketResponseDTO;
 import com.smartcampus.ticket.model.Ticket;
@@ -16,9 +18,12 @@ import com.smartcampus.ticket.repository.TicketRepository;
 public class TicketServiceImpl implements TicketService {
 
     private final TicketRepository ticketRepository;
+    private final NotificationService notificationService;
 
-    public TicketServiceImpl(TicketRepository ticketRepository) {
+    public TicketServiceImpl(TicketRepository ticketRepository,NotificationService notificationService) {
         this.ticketRepository = ticketRepository;
+        this.notificationService = notificationService;
+
     }
 
     @Override
@@ -85,6 +90,13 @@ public class TicketServiceImpl implements TicketService {
         ticket.setUpdatedAt(LocalDateTime.now());
 
         ticketRepository.save(ticket);
+
+        notificationService.createNotification(
+            technicianId,
+            NotificationType.TICKET_ASSIGNED,
+            "You have been assigned to ticket #" + ticketId,
+            ticketId
+        );
     }
 
     @Override

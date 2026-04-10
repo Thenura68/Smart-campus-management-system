@@ -7,11 +7,13 @@ import com.smartcampus.notification.model.NotificationType;
 
 public interface NotificationService {
 
-    Notification createNotification(Long userId, NotificationType type, String message, Long referenceId);
+    void createNotification(Long userId, NotificationType type, String message, Long referenceId);
 
-    List<Notification> getUserNotifications(Long userId);
+    List<Notification> getAllNotificationsByUserId(Long userId);
 
-    Notification markAsRead(Long notificationId, Long userId);
+    List<Notification> getUnreadNotificationsByUserId(Long userId);
 
-    Notification getById(Long id);
+    void markNotificationAsRead(Long notificationId);
+
+    void markAllNotificationsAsRead(Long userId);
 }

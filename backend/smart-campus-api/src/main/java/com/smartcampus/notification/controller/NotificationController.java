@@ -13,7 +13,7 @@ import com.smartcampus.notification.model.Notification;
 import com.smartcampus.notification.service.NotificationService;
 
 @RestController
-@RequestMapping("/api/user/notifications")
+@RequestMapping("/api/notifications")
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -22,20 +22,25 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Notification>> getMyNotifications() {
-        Long currentUserId = 2L; // temporary for testing
-        return ResponseEntity.ok(notificationService.getUserNotifications(currentUserId));
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<Notification>> getAllNotifications(@PathVariable Long userId) {
+        return ResponseEntity.ok(notificationService.getAllNotificationsByUserId(userId));
     }
 
-    @GetMapping("/{id}")
-    public Notification getNotificationById(@PathVariable Long id) {
-        return notificationService.getById(id);
+    @GetMapping("/{userId}/unread")
+    public ResponseEntity<List<Notification>> getUnreadNotifications(@PathVariable Long userId) {
+        return ResponseEntity.ok(notificationService.getUnreadNotificationsByUserId(userId));
     }
 
-    @PutMapping("/{id}/read")
-    public ResponseEntity<Notification> markAsRead(@PathVariable Long id) {
-        Long currentUserId = 2L; // temporary for testing
-        return ResponseEntity.ok(notificationService.markAsRead(id, currentUserId));
+    @PutMapping("/{notificationId}/read")
+    public ResponseEntity<String> markNotificationAsRead(@PathVariable Long notificationId) {
+        notificationService.markNotificationAsRead(notificationId);
+        return ResponseEntity.ok("Notification marked as read");
+    }
+
+    @PutMapping("/user/{userId}/read-all")
+    public ResponseEntity<String> markAllNotificationsAsRead(@PathVariable Long userId) {
+        notificationService.markAllNotificationsAsRead(userId);
+        return ResponseEntity.ok("All notifications marked as read");
     }
 }
