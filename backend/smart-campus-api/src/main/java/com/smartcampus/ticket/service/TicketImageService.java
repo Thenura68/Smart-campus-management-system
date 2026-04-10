@@ -12,4 +12,8 @@ public interface TicketImageService {
     List<TicketImage> uploadImages(Long ticketId, List<MultipartFile> files);
 
     List<TicketImageResponseDTO> getImagesByTicketId(Long ticketId, Long currentUserId);
+
+     List<TicketImageResponseDTO> getImagesByTicketIdForTechnician(Long ticketId, Long technicianId);
+
+
 }

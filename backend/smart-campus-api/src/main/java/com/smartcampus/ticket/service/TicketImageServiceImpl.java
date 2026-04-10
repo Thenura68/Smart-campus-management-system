@@ -90,6 +90,9 @@ public class TicketImageServiceImpl implements TicketImageService {
         return savedImages;
     }
 
+
+
+
     @Override
     public List<TicketImageResponseDTO> getImagesByTicketId(Long ticketId, Long currentUserId) {
 
@@ -117,4 +120,33 @@ public class TicketImageServiceImpl implements TicketImageService {
 
         return responseList;
     }
+
+    @Override
+    public List<TicketImageResponseDTO> getImagesByTicketIdForTechnician(Long ticketId, Long technicianId) {
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        if (ticket.getAssignedTo() == null || !ticket.getAssignedTo().equals(technicianId)) {
+            throw new RuntimeException("You are not assigned to this ticket");
+        }
+
+        List<TicketImage> images = ticketImageRepository.findByTicketId(ticketId);
+        List<TicketImageResponseDTO> responseList = new ArrayList<>();
+
+        for (TicketImage image : images) {
+            TicketImageResponseDTO dto = new TicketImageResponseDTO();
+            dto.setId(image.getId());
+            dto.setTicketId(image.getTicketId());
+            dto.setFileName(image.getFileName());
+            dto.setImageUrl("http://localhost:8080/" + image.getFilePath());
+            dto.setFileSize(image.getFileSize());
+            dto.setUploadedAt(image.getUploadedAt() != null ? image.getUploadedAt().toString() : null);
+
+            responseList.add(dto);
+        }
+
+        return responseList;
+    }
+
 }
