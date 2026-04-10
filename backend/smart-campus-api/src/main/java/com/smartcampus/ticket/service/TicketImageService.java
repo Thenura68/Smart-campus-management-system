@@ -13,7 +13,7 @@ public interface TicketImageService {
 
     List<TicketImageResponseDTO> getImagesByTicketId(Long ticketId, Long currentUserId);
 
-     List<TicketImageResponseDTO> getImagesByTicketIdForTechnician(Long ticketId, Long technicianId);
+    List<TicketImageResponseDTO> getImagesByTicketIdForTechnician(Long ticketId, Long technicianId);
 
-
+    List<TicketImageResponseDTO> getImagesByTicketIdForAdmin(Long ticketId);
 }

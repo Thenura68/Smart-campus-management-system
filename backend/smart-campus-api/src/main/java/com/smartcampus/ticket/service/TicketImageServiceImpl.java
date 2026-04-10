@@ -9,15 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.smartcampus.ticket.dto.TicketImageResponseDTO;
 import com.smartcampus.ticket.model.Ticket;
 import com.smartcampus.ticket.model.TicketImage;
 import com.smartcampus.ticket.repository.TicketImageRepository;
 import com.smartcampus.ticket.repository.TicketRepository;
-
 
 @Service
 public class TicketImageServiceImpl implements TicketImageService {
@@ -97,10 +98,40 @@ public class TicketImageServiceImpl implements TicketImageService {
     public List<TicketImageResponseDTO> getImagesByTicketId(Long ticketId, Long currentUserId) {
 
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found"));
 
         if (!ticket.getCreatedBy().equals(currentUserId)) {
-            throw new RuntimeException("You cannot access images of this ticket");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot access images of this ticket");
+        }
+
+        List<TicketImage> images = ticketImageRepository.findByTicketId(ticketId);
+        List<TicketImageResponseDTO> responseList = new ArrayList<>();
+
+        for (TicketImage image : images) {
+            TicketImageResponseDTO dto = new TicketImageResponseDTO();
+            dto.setId(image.getId());
+            dto.setTicketId(image.getTicketId());
+            dto.setFileName(image.getFileName());
+            dto.setImageUrl("http://localhost:8080/" + image.getFilePath());
+            dto.setFileSize(image.getFileSize());
+            dto.setUploadedAt(image.getUploadedAt() != null ? image.getUploadedAt().toString() : null);
+
+            responseList.add(dto);
+        }
+
+        return responseList;
+    }
+
+
+
+    @Override
+    public List<TicketImageResponseDTO> getImagesByTicketIdForTechnician(Long ticketId, Long technicianId) {
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found"));
+
+        if (ticket.getAssignedTo() == null || !ticket.getAssignedTo().equals(technicianId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not assigned to this ticket");
         }
 
         List<TicketImage> images = ticketImageRepository.findByTicketId(ticketId);
@@ -122,14 +153,10 @@ public class TicketImageServiceImpl implements TicketImageService {
     }
 
     @Override
-    public List<TicketImageResponseDTO> getImagesByTicketIdForTechnician(Long ticketId, Long technicianId) {
+    public List<TicketImageResponseDTO> getImagesByTicketIdForAdmin(Long ticketId) {
 
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
-
-        if (ticket.getAssignedTo() == null || !ticket.getAssignedTo().equals(technicianId)) {
-            throw new RuntimeException("You are not assigned to this ticket");
-        }
+        ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found"));
 
         List<TicketImage> images = ticketImageRepository.findByTicketId(ticketId);
         List<TicketImageResponseDTO> responseList = new ArrayList<>();
