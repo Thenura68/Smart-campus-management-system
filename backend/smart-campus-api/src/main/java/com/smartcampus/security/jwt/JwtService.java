@@ -24,7 +24,7 @@ public class JwtService {
             .setSubject(user.getId().toString())
             .claim("email", user.getEmail())
             .claim("name", user.getName())
-            .claim("role", user.getRole())  // ← user.getRole() returns String
+            .claim("role", user.getRole().toString())  // Convert enum to String
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
             .signWith(getSigningKey(), SignatureAlgorithm.HS256)

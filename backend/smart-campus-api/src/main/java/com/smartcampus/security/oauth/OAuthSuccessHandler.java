@@ -1,6 +1,7 @@
 package com.smartcampus.security.oauth;
 
 import com.smartcampus.security.jwt.JwtService;
+import com.smartcampus.security.roles.Role;
 import com.smartcampus.user.model.User;
 import com.smartcampus.user.repository.UserRepository;
 import jakarta.servlet.ServletException;
@@ -36,9 +37,9 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         String name = oAuth2User.getAttribute("name");
         String googleId = oAuth2User.getAttribute("sub");
         
-        // Check if any admin exists (role = "ADMIN")
+        // Check if any admin exists (using Role enum)
         boolean adminExists = userRepository.findAll().stream()
-            .anyMatch(user -> "ADMIN".equals(user.getRole()));
+            .anyMatch(user -> user.getRole() == Role.ADMIN);
         
         User user = userRepository.findByEmail(email)
             .orElseGet(() -> {
@@ -46,11 +47,11 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 newUser.setEmail(email);
                 newUser.setName(name);
                 newUser.setGoogleId(googleId);
-                // First user becomes "ADMIN", rest become "USER"
+                // First user becomes ADMIN, rest become USER
                 if (!adminExists && userRepository.count() == 0) {
-                    newUser.setRole("ADMIN");  // ← String value
+                    newUser.setRole(Role.ADMIN);
                 } else {
-                    newUser.setRole("USER");   // ← String value
+                    newUser.setRole(Role.USER);
                 }
                 return userRepository.save(newUser);
             });
@@ -60,7 +61,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         
         String jwt = jwtService.generateToken(user);
         
-        String redirectUrl = "http://localhost:3000/oauth-success?token=" + jwt;
+        String redirectUrl = "http://localhost:5173/oauth-success?token=" + jwt;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
