@@ -11,3 +11,16 @@ export const createTicket = async (formData) => {
 
   return response.data;
 };
+
+
+
+export const getUserTickets = async () => {
+  const response = await axios.get(BASE_URL);
+  return response.data;
+};
+
+
+export const getTicketImages = async (ticketId) => {
+  const response = await axios.get(`${BASE_URL}/${ticketId}/images`);
+  return response.data;
+};
