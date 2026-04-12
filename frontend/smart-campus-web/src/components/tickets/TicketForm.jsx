@@ -71,148 +71,216 @@ function TicketForm() {
       setImages([]);
     } catch (error) {
       console.error("Ticket creation failed:", error);
-
-      if (error.response && error.response.data) {
-        setErrorMessage("Failed to create ticket.");
-      } else {
-        setErrorMessage("Server error. Please try again.");
-      }
+      setErrorMessage("Failed to create ticket.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Create Ticket</h2>
-
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter ticket title"
-            style={styles.input}
-          />
+    <div style={styles.page}>
+      <div style={styles.card}>
+        <div style={styles.header}>
+          <h2 style={styles.title}>Create Support Ticket</h2>
+          <p style={styles.subtitle}>
+            Report an issue and attach up to 3 images if needed.
+          </p>
         </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Describe the issue"
-            rows="5"
-            style={styles.textarea}
-          />
-        </div>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <div style={styles.field}>
+            <label style={styles.label}>Title</label>
+            <input
+              type="text"
+              placeholder="Enter ticket title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={styles.input}
+            />
+          </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Priority</label>
-          <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            style={styles.select}
-          >
-            <option value="">Select priority</option>
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
-          </select>
-        </div>
+          <div style={styles.field}>
+            <label style={styles.label}>Description</label>
+            <textarea
+              placeholder="Describe the issue clearly"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows="5"
+              style={styles.textarea}
+            />
+          </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Resource ID</label>
-          <input
-            type="number"
-            value={resourceId}
-            onChange={(e) => setResourceId(e.target.value)}
-            placeholder="Enter resource ID"
-            style={styles.input}
-          />
-        </div>
+          <div style={styles.row}>
+            <div style={styles.field}>
+              <label style={styles.label}>Priority</label>
+              <select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                style={styles.input}
+              >
+                <option value="">Select priority</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+              </select>
+            </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Upload Images</label>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleFileChange}
-            style={styles.input}
-          />
-          <small>You can upload up to 3 images.</small>
-        </div>
+            <div style={styles.field}>
+              <label style={styles.label}>Resource ID</label>
+              <input
+                type="number"
+                placeholder="Optional"
+                value={resourceId}
+                onChange={(e) => setResourceId(e.target.value)}
+                style={styles.input}
+              />
+            </div>
+          </div>
 
-        {errorMessage && <p style={styles.error}>{errorMessage}</p>}
-        {successMessage && <p style={styles.success}>{successMessage}</p>}
+          <div style={styles.field}>
+            <label style={styles.label}>Upload Images</label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileChange}
+              style={styles.fileInput}
+            />
+            <small style={styles.helperText}>Maximum 3 images allowed.</small>
 
-        <button type="submit" style={styles.button} disabled={loading}>
-          {loading ? "Submitting..." : "Create Ticket"}
-        </button>
-      </form>
+            {images.length > 0 && (
+              <div style={styles.fileList}>
+                {images.map((image, index) => (
+                  <div key={index} style={styles.fileItem}>
+                    {image.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {errorMessage && <p style={styles.error}>{errorMessage}</p>}
+          {successMessage && <p style={styles.success}>{successMessage}</p>}
+
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? "Creating..." : "Create Ticket"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
 
 const styles = {
-  container: {
-    maxWidth: "600px",
-    margin: "40px auto",
-    padding: "24px",
-    border: "1px solid #ddd",
-    borderRadius: "12px",
-    backgroundColor: "#fff",
+  page: {
+    minHeight: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "48px 20px",
+    background: "#1f1f1f",
   },
-  heading: {
-    marginBottom: "20px",
-    textAlign: "center",
+  card: {
+    width: "100%",
+    maxWidth: "720px",
+    background: "#ffffff",
+    borderRadius: "18px",
+    padding: "32px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.20)",
+  },
+  header: {
+    marginBottom: "24px",
+  },
+  title: {
+    margin: "0 0 8px 0",
+    fontSize: "28px",
+    color: "#111827",
+  },
+  subtitle: {
+    margin: 0,
+    color: "#6b7280",
+    fontSize: "15px",
   },
   form: {
     display: "flex",
     flexDirection: "column",
+    gap: "18px",
+  },
+  row: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
     gap: "16px",
   },
-  formGroup: {
+  field: {
     display: "flex",
     flexDirection: "column",
   },
   label: {
-    marginBottom: "6px",
-    fontWeight: "bold",
+    marginBottom: "8px",
+    fontWeight: "600",
+    color: "#111827",
+    fontSize: "14px",
   },
   input: {
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
+    padding: "12px 14px",
+    borderRadius: "12px",
+    border: "1px solid #d1d5db",
+    fontSize: "14px",
+    outline: "none",
+    background: "#6e6e6e",
   },
   textarea: {
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
+    padding: "12px 14px",
+    borderRadius: "12px",
+    border: "1px solid #d1d5db",
+    fontSize: "14px",
+    outline: "none",
     resize: "vertical",
+    background: "#6e6e6e",
   },
-  select: {
+  fileInput: {
     padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
+    borderRadius: "12px",
+    border: "1px solid #d1d5db",
+    background: "#f9fafb",
+  },
+  helperText: {
+    marginTop: "6px",
+    color: "#6b7280",
+  },
+  fileList: {
+    marginTop: "10px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+  },
+  fileItem: {
+    background: "#f3f4f6",
+    padding: "10px 12px",
+    borderRadius: "10px",
+    fontSize: "14px",
+    color: "#374151",
   },
   button: {
-    padding: "12px",
+    marginTop: "8px",
+    padding: "14px",
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "12px",
+    background: "#111827",
+    color: "#ffffff",
+    fontSize: "15px",
+    fontWeight: "600",
     cursor: "pointer",
-    fontWeight: "bold",
   },
   error: {
-    color: "red",
     margin: 0,
+    color: "#dc2626",
+    fontSize: "14px",
   },
   success: {
-    color: "green",
     margin: 0,
+    color: "#16a34a",
+    fontSize: "14px",
   },
 };
 
