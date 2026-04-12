@@ -8,6 +8,8 @@ import MyTicketsPage from "../pages/user/MyTicketsPage";
 import TicketDetailsPage from "../pages/user/TicketDetailsPage";
 import AdminTicketsPage from "../pages/admin/AdminTicketsPage";
 import AdminTicketDetailsPage from "../pages/admin/AdminTicketDetailsPage";
+import AssignedTicketsPage from "../pages/technician/AssignedTicketsPage";
+import TechnicianTicketDetailsPage from "../pages/technician/TechnicianTicketDetailsPage";
 
 export default function AppRoutes() {
   return (
@@ -25,6 +27,8 @@ export default function AppRoutes() {
         <Route path="/user/tickets/:id" element={<TicketDetailsPage />} />
         <Route path="/admin/tickets" element={<AdminTicketsPage />} />
         <Route path="/admin/tickets/:id" element={<AdminTicketDetailsPage />} />
+        <Route path="/technician/tickets" element={<AssignedTicketsPage />} />
+        <Route path="/technician/tickets/:id" element={<TechnicianTicketDetailsPage />} />
 
       ///////////////////////////////////////////////////////////////////
       </Routes>
