@@ -6,6 +6,8 @@ import ManageResourcesPage from "../pages/admin/ManageResourcesPage";
 import CreateTicketPage from "../pages/technician/CreateTicketPage";
 import MyTicketsPage from "../pages/user/MyTicketsPage";
 import TicketDetailsPage from "../pages/user/TicketDetailsPage";
+import AdminTicketsPage from "../pages/admin/AdminTicketsPage";
+import AdminTicketDetailsPage from "../pages/admin/AdminTicketDetailsPage";
 
 export default function AppRoutes() {
   return (
@@ -14,9 +16,17 @@ export default function AppRoutes() {
         <Route path="/" element={<ResourceCataloguePage />} />
         <Route path="/resources/:id" element={<ResourceDetailsPage />} />
         <Route path="/admin/resources" element={<ManageResourcesPage />} />
+
+
+      ///////////////////////////////Manith//////////////////////////////
+
         <Route path="/user/tickets/create" element={<CreateTicketPage />} />
         <Route path="/user/tickets" element={<MyTicketsPage />} />
         <Route path="/user/tickets/:id" element={<TicketDetailsPage />} />
+        <Route path="/admin/tickets" element={<AdminTicketsPage />} />
+        <Route path="/admin/tickets/:id" element={<AdminTicketDetailsPage />} />
+
+      ///////////////////////////////////////////////////////////////////
       </Routes>
     </BrowserRouter>
   );

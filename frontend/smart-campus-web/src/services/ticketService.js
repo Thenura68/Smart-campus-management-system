@@ -24,3 +24,23 @@ export const getTicketImages = async (ticketId) => {
   const response = await axios.get(`${BASE_URL}/${ticketId}/images`);
   return response.data;
 };
+
+export const getAllTicketsForAdmin = async () => {
+  const response = await axios.get("http://localhost:8080/api/admin/tickets");
+  return response.data;
+};
+
+
+
+export const getAdminTicketImages = async (ticketId) => {
+  const response = await axios.get(`http://localhost:8080/api/admin/tickets/${ticketId}/images`);
+  return response.data;
+};
+
+export const assignTechnician = async (ticketId, technicianId) => {
+  const response = await axios.put(
+    `http://localhost:8080/api/admin/tickets/${ticketId}/assign`,
+    { technicianId }
+  );
+  return response.data;
+};
