@@ -1,5 +1,9 @@
 package com.smartcampus.ticket.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,18 +15,24 @@ import com.smartcampus.notification.service.NotificationService;
 import com.smartcampus.ticket.dto.TicketCreateDTO;
 import com.smartcampus.ticket.dto.TicketResponseDTO;
 import com.smartcampus.ticket.model.Ticket;
+import com.smartcampus.ticket.model.TicketImage;
 import com.smartcampus.ticket.model.TicketStatus;
+import com.smartcampus.ticket.repository.TicketImageRepository;
 import com.smartcampus.ticket.repository.TicketRepository;
+
 
 @Service
 public class TicketServiceImpl implements TicketService {
 
     private final TicketRepository ticketRepository;
+    private final TicketImageRepository ticketImageRepository;
     private final NotificationService notificationService;
+    
 
-    public TicketServiceImpl(TicketRepository ticketRepository,NotificationService notificationService) {
+    public TicketServiceImpl(TicketRepository ticketRepository,NotificationService notificationService,TicketImageRepository ticketImageRepository) {
         this.ticketRepository = ticketRepository;
         this.notificationService = notificationService;
+        this.ticketImageRepository = ticketImageRepository;
 
     }
 
@@ -140,6 +150,37 @@ public class TicketServiceImpl implements TicketService {
 
         ticketRepository.save(ticket);
     }
+
+
+
+    @Override
+    public void deleteTicket(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        if (ticket.getStatus() != TicketStatus.RESOLVED) {
+            throw new RuntimeException("Only resolved tickets can be deleted");
+        }
+
+        List<TicketImage> images = ticketImageRepository.findByTicketId(ticketId);
+
+        for (TicketImage image : images) {
+            try {
+                String storedPath = image.getFilePath();
+
+                if (storedPath != null && !storedPath.isBlank()) {
+                    Path filePath = Paths.get(storedPath).toAbsolutePath().normalize();
+                    Files.deleteIfExists(filePath);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to delete image file: " + image.getFilePath(), e);
+            }
+        }
+
+        ticketImageRepository.deleteAll(images);
+        ticketRepository.delete(ticket);
+    }
+
 
 
     private TicketResponseDTO mapToResponseDTO(Ticket ticket) {

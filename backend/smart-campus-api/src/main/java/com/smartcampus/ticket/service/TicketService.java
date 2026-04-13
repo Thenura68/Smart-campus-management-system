@@ -22,4 +22,7 @@ public interface TicketService {
     void updateTicketStatus(Long ticketId, String status, Long technicianId);
 
     void updateResolution(Long ticketId, String resolutionNotes, Long technicianId);
+
+    void deleteTicket(Long ticketId);
+
 }
