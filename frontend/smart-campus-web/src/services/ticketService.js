@@ -79,3 +79,10 @@ export const deleteAdminTicket = async (ticketId) => {
   const response = await axios.delete(`http://localhost:8080/api/admin/tickets/${ticketId}`);
   return response.data;
 };
+
+export const deleteTechnicianTicket = async (ticketId) => {
+  const response = await axios.delete(
+    `http://localhost:8080/api/technician/tickets/${ticketId}`
+  );
+  return response.data;
+};

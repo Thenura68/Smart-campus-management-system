@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.smartcampus.notification.model.NotificationType;
 import com.smartcampus.notification.service.NotificationService;
@@ -171,6 +173,42 @@ public class TicketServiceImpl implements TicketService {
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Failed to delete image file: " + image.getFilePath(), e);
+            }
+        }
+
+        ticketImageRepository.deleteAll(images);
+        ticketRepository.delete(ticket);
+    }
+
+
+
+    @Override
+    public void deleteTicketForTechnician(Long ticketId, Long technicianId) {
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found"));
+
+        
+        if (ticket.getAssignedTo() == null || !ticket.getAssignedTo().equals(technicianId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not assigned to this ticket");
+        }
+
+        // Only resolved tickets are deleted
+        if (ticket.getStatus() != TicketStatus.RESOLVED) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Only resolved tickets can be deleted"
+            );
+        }
+
+        List<TicketImage> images = ticketImageRepository.findByTicketId(ticketId);
+
+        for (TicketImage image : images) {
+            try {
+                Path filePath = Paths.get(image.getFilePath()).toAbsolutePath().normalize();
+                Files.deleteIfExists(filePath);
+            } catch (IOException e) {
+                System.out.println("Failed to delete file: " + image.getFilePath());
             }
         }
 

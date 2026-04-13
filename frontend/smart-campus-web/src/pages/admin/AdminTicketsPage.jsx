@@ -113,7 +113,7 @@ function AdminTicketsPage() {
                   style={styles.button}
                   onClick={() => handleViewTicket(ticket.id)}
                 >
-                  View Ticket
+                  Assign a technician
                 </button>
 
                 <button

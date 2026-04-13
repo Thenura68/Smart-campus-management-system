@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getTechnicianTickets } from "../../services/ticketService";
+import { getTechnicianTickets,deleteTechnicianTicket} from "../../services/ticketService";
 
 function AssignedTicketsPage() {
   const [tickets, setTickets] = useState([]);
@@ -27,6 +27,32 @@ function AssignedTicketsPage() {
       setLoading(false);
     }
   };
+
+
+  const handleDeleteTicket = async (ticketId) => {
+    const confirmed = window.confirm("Are you sure you want to delete this ticket?");
+    if (!confirmed) return;
+
+    try {
+      setErrorMessage("");
+
+      await deleteTechnicianTicket(ticketId);
+
+      // remove from UI
+      setTickets((prev) => prev.filter((t) => t.id !== ticketId));
+    } catch (error) {
+      console.error(error);
+
+      if (error.response?.data?.message) {
+        setErrorMessage(error.response.data.message);
+      } else if (error.response?.data?.error) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage("Failed to delete ticket.");
+      }
+    }
+  };
+
 
   const handleViewTicket = (ticketId) => {
     navigate(`/technician/tickets/${ticketId}`);
@@ -80,12 +106,23 @@ function AssignedTicketsPage() {
                   </span>
                 </div>
 
+                <div style={styles.buttonRow}>
                 <button
                   style={styles.button}
                   onClick={() => handleViewTicket(ticket.id)}
                 >
                   View Ticket
                 </button>
+
+                {ticket.status === "RESOLVED" && (
+                  <button
+                    style={styles.deleteButton}
+                    onClick={() => handleDeleteTicket(ticket.id)}
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
               </div>
             ))}
           </div>
@@ -209,6 +246,24 @@ const styles = {
     fontWeight: "600",
     cursor: "pointer",
   },
+
+    buttonRow: {
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap",
+  },
+
+  deleteButton: {
+    padding: "12px 18px",
+    border: "none",
+    borderRadius: "12px",
+    background: "#dc2626",
+    color: "#ffffff",
+    fontWeight: "600",
+    cursor: "pointer",
+  },
+
+
 };
 
 export default AssignedTicketsPage;

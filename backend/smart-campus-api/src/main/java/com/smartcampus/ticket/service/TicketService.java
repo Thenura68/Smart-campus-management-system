@@ -24,5 +24,7 @@ public interface TicketService {
     void updateResolution(Long ticketId, String resolutionNotes, Long technicianId);
 
     void deleteTicket(Long ticketId);
+    
+    void deleteTicketForTechnician(Long ticketId, Long technicianId);
 
 }
