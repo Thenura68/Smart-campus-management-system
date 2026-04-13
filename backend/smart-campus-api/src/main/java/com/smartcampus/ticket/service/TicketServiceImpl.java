@@ -158,9 +158,6 @@ public class TicketServiceImpl implements TicketService {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
-        if (ticket.getStatus() != TicketStatus.RESOLVED) {
-            throw new RuntimeException("Only resolved tickets can be deleted");
-        }
 
         List<TicketImage> images = ticketImageRepository.findByTicketId(ticketId);
 

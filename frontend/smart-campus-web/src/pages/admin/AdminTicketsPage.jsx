@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllTicketsForAdmin } from "../../services/ticketService";
+import { getAllTicketsForAdmin, deleteAdminTicket} from "../../services/ticketService";
 
 function AdminTicketsPage() {
   const [tickets, setTickets] = useState([]);
@@ -25,6 +25,32 @@ function AdminTicketsPage() {
       setErrorMessage("Failed to load tickets.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteTicket = async (ticketId) => {
+    const confirmed = window.confirm("Are you sure you want to delete this ticket?");
+    if (!confirmed) return;
+
+    try {
+      setErrorMessage("");
+
+      await deleteAdminTicket(ticketId);
+
+      setTickets((prevTickets) =>
+        prevTickets.filter((ticket) => ticket.id !== ticketId)
+      );
+    } catch (error) {
+      console.error("Failed to delete ticket:", error);
+      console.error("Backend response:", error.response);
+
+      if (error.response?.data?.message) {
+        setErrorMessage(error.response.data.message);
+      } else if (error.response?.data?.error) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage("Failed to delete ticket.");
+      }
     }
   };
 
@@ -82,12 +108,21 @@ function AdminTicketsPage() {
                   </span>
                 </div>
 
+                <div style={styles.buttonRow}>
                 <button
                   style={styles.button}
                   onClick={() => handleViewTicket(ticket.id)}
                 >
                   View Ticket
                 </button>
+
+                <button
+                  style={styles.deleteButton}
+                  onClick={() => handleDeleteTicket(ticket.id)}
+                >
+                  Delete
+                </button>
+              </div>
               </div>
             ))}
           </div>
@@ -211,6 +246,25 @@ const styles = {
     fontWeight: "600",
     cursor: "pointer",
   },
+
+    buttonRow: {
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap",
+  },
+  deleteButton: {
+    padding: "12px 18px",
+    border: "none",
+    borderRadius: "12px",
+    background: "#dc2626",
+    color: "#ffffff",
+    fontWeight: "600",
+    cursor: "pointer",
+  },
+
+
 };
+
+
 
 export default AdminTicketsPage;

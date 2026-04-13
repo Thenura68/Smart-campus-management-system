@@ -74,3 +74,8 @@ export const updateTechnicianTicketStatus = async (ticketId, status) => {
   );
   return response.data;
 };
+
+export const deleteAdminTicket = async (ticketId) => {
+  const response = await axios.delete(`http://localhost:8080/api/admin/tickets/${ticketId}`);
+  return response.data;
+};
