@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,6 +88,14 @@ public class TicketUserController {
         }
 
         return ResponseEntity.ok("received = " + (images == null ? 0 : images.length));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUserTicket(@PathVariable Long id) {
+        Long userId = 2L; // temporary (same as your current setup)
+        ticketService.deleteTicketForUser(id, userId);
+        return ResponseEntity.ok("Ticket deleted successfully");
     }
 
 }

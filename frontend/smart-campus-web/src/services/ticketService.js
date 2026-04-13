@@ -86,3 +86,10 @@ export const deleteTechnicianTicket = async (ticketId) => {
   );
   return response.data;
 };
+
+export const deleteUserTicket = async (ticketId) => {
+  const response = await axios.delete(
+    `http://localhost:8080/api/user/tickets/${ticketId}`
+  );
+  return response.data;
+};

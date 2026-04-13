@@ -27,4 +27,6 @@ public interface TicketService {
     
     void deleteTicketForTechnician(Long ticketId, Long technicianId);
 
+    void deleteTicketForUser(Long ticketId, Long userId);
+
 }

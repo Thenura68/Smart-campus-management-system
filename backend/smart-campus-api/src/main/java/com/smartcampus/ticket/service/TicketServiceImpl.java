@@ -217,6 +217,34 @@ public class TicketServiceImpl implements TicketService {
     }
 
 
+    @Override
+    public void deleteTicketForUser(Long ticketId, Long userId) {
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found"));
+
+        // Only owner can delete
+        if (!ticket.getCreatedBy().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only delete your own tickets");
+        }
+
+        
+        
+        List<TicketImage> images = ticketImageRepository.findByTicketId(ticketId);
+
+        for (TicketImage image : images) {
+            try {
+                Path filePath = Paths.get(image.getFilePath()).toAbsolutePath().normalize();
+                Files.deleteIfExists(filePath);
+            } catch (IOException e) {
+                System.out.println("Failed to delete file: " + image.getFilePath());
+            }
+        }
+
+        ticketImageRepository.deleteAll(images);
+        ticketRepository.delete(ticket);
+    }
+
 
     private TicketResponseDTO mapToResponseDTO(Ticket ticket) {
         TicketResponseDTO dto = new TicketResponseDTO();
