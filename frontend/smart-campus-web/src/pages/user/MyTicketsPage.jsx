@@ -194,8 +194,9 @@ const styles = {
     color: "#6b7280",
   },
   ticketList: {
-    display: "grid",
-    gap: "18px",
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  gap: "18px",
   },
   ticketCard: {
     background: "#ffffff",
@@ -212,12 +213,13 @@ const styles = {
   },
   ticketTitle: {
     margin: 0,
-    fontSize: "22px",
+    fontSize: "26px",
     color: "#111827",
   },
   ticketDescription: {
     margin: "0 0 16px 0",
     color: "#4b5563",
+    fontSize: "18px",
     lineHeight: "1.5",
   },
   metaRow: {
