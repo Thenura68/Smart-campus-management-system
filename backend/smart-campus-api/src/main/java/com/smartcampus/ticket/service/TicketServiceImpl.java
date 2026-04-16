@@ -53,6 +53,17 @@ public class TicketServiceImpl implements TicketService {
         ticket.setUpdatedAt(null);
 
         Ticket savedTicket = ticketRepository.save(ticket);
+
+
+        Long adminId = 1L; // TEMPORARYYY!!
+
+        notificationService.createNotification(
+            adminId,
+            NotificationType.TICKET_CREATED,
+            "A new ticket has been created",
+            savedTicket.getId()
+        );
+
         return mapToResponseDTO(savedTicket);
     }
 
@@ -136,6 +147,25 @@ public class TicketServiceImpl implements TicketService {
         ticket.setUpdatedAt(LocalDateTime.now());
 
         ticketRepository.save(ticket);
+
+        if (ticket.getStatus() == TicketStatus.RESOLVED) {
+            notificationService.createNotification(
+                ticket.getCreatedBy(),
+                NotificationType.TICKET_RESOLVED,
+                "Your ticket #" + ticketId + " has been resolved",
+                ticketId
+            );
+        }
+        else {
+            notificationService.createNotification(
+                ticket.getCreatedBy(),
+                NotificationType.TICKET_STATUS_UPDATED,
+                "Your ticket status changed to " + ticket.getStatus(),
+                ticketId
+            );
+        }
+        
+        
     }
 
     @Override

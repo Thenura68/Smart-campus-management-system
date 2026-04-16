@@ -62,4 +62,12 @@ public class NotificationServiceImpl implements NotificationService {
 
         notificationRepository.saveAll(notifications);
     }
+
+    @Override
+    public int getUnreadCount(Long userId) {
+        return notificationRepository
+                .findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId)
+                .size();
+    }
+
 }
