@@ -30,6 +30,13 @@ export default function useNotifications(userId) {
   useEffect(() => {
     fetchNotifications();
     fetchUnreadCount();
+
+    const interval = setInterval(() => {
+      fetchNotifications();
+      fetchUnreadCount();
+    }, 3000); // every 3 seconds
+
+    return () => clearInterval(interval);
   }, [userId]);
 
   return { notifications, unreadCount, markAsRead };

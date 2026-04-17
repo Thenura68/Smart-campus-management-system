@@ -12,7 +12,16 @@ function NotificationBell() {
       
       {/* 🔔 Bell */}
       <div onClick={() => setOpen(!open)} style={{ cursor: "pointer" }}>
-        🔔 {unreadCount > 0 && <span style={{ color: "red" }}>{unreadCount}</span>}
+        🔔 {unreadCount > 0 && <span style={{
+              background: "red",
+              color: "white",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "12px",
+              marginLeft: "5px"
+            }}>
+              {unreadCount}
+            </span>}
       </div>
 
       {/* 📥 Dropdown */}
