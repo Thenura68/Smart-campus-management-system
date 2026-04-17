@@ -199,9 +199,10 @@ const styles = {
     margin: 0,
     color: "#6b7280",
   },
-  ticketList: {
-    display: "grid",
-    gap: "18px",
+    ticketList: {
+  display: "grid",
+  gridTemplateColumns: "repeat(1, 1fr)",
+  gap: "18px",
   },
   ticketCard: {
     background: "#ffffff",
