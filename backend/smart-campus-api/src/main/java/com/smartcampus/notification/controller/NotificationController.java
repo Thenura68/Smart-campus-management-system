@@ -3,6 +3,7 @@ package com.smartcampus.notification.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,4 +50,13 @@ public class NotificationController {
     public ResponseEntity<Integer> getUnreadCount(@PathVariable Long userId) {
         return ResponseEntity.ok(notificationService.getUnreadCount(userId));
     }
+
+    @DeleteMapping("/{notificationId}")
+    public ResponseEntity<String> deleteNotification(@PathVariable Long notificationId) {
+        notificationService.deleteNotification(notificationId);
+        return ResponseEntity.ok("Notification deleted");
+    }
+
+
+
 }

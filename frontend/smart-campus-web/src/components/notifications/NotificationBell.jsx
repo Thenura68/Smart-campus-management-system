@@ -3,7 +3,7 @@ import useNotifications from "../../hooks/useNotifications";
 
 function NotificationBell() {
   const userId = 1; // replace later with JWT
-  const { notifications, unreadCount, markAsRead } = useNotifications(userId);
+  const { notifications, unreadCount, deleteNotification } = useNotifications(userId);
 
   const [open, setOpen] = useState(false);
 
@@ -41,7 +41,7 @@ function NotificationBell() {
             notifications.slice(0, 5).map(n => (
               <div
                 key={n.id}
-                onClick={() => markAsRead(n.id)}
+                onClick={() => deleteNotification(n.id)}
                 style={{
                   padding: "10px",
                   borderBottom: "1px solid #eee",

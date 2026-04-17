@@ -16,12 +16,12 @@ export default function useNotifications(userId) {
       .then(data => setUnreadCount(data));
   };
 
-  const markAsRead = (id) => {
-    fetch(`http://localhost:8080/api/notifications/${id}/read`, {
-      method: "PUT"
+  const deleteNotification = (id) => {
+    fetch(`http://localhost:8080/api/notifications/${id}`, {
+      method: "DELETE"
     }).then(() => {
       setNotifications(prev =>
-        prev.map(n => n.id === id ? { ...n, isRead: true } : n)
+        prev.filter(n => n.id !== id)
       );
       fetchUnreadCount();
     });
@@ -39,5 +39,5 @@ export default function useNotifications(userId) {
     return () => clearInterval(interval);
   }, [userId]);
 
-  return { notifications, unreadCount, markAsRead };
+  return { notifications, unreadCount, deleteNotification };
 }

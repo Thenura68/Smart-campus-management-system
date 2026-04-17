@@ -70,4 +70,9 @@ public class NotificationServiceImpl implements NotificationService {
                 .size();
     }
 
+
+    @Override
+    public void deleteNotification(Long notificationId) {
+        notificationRepository.deleteById(notificationId);
+    }
 }
