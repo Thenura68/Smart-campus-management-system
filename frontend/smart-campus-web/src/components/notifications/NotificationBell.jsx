@@ -37,6 +37,7 @@ function NotificationBell() {
                   padding: "10px",
                   borderBottom: "1px solid #eee",
                   background: n.isRead ? "#fff" : "#f5f5f5",
+                  color: "#000",
                   cursor: "pointer"
                 }}
               >
