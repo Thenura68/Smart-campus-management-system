@@ -3,70 +3,41 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getResourceById } from "../../services/resourceService";
 import "./ResourceDetailsPage.css";
 
+/* ── Type-specific config: Unsplash images + color themes ── */
 const TYPE_CONFIG = {
   LAB: {
     label: "Laboratory",
     accent: "#059669",
-    soft: "#ecfdf5",
-    border: "#6ee7b7",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="20" y="8" width="8" height="24" rx="4" fill="#059669" opacity="0.2"/>
-        <rect x="36" y="4" width="8" height="28" rx="4" fill="#059669" opacity="0.35"/>
-        <ellipse cx="24" cy="44" rx="14" ry="10" fill="#059669" opacity="0.15"/>
-        <ellipse cx="24" cy="44" rx="14" ry="10" stroke="#059669" strokeWidth="1.5"/>
-        <path d="M20 32 C18 36 14 40 24 50 C34 40 30 36 28 32" fill="#059669" opacity="0.25"/>
-        <circle cx="20" cy="46" r="3" fill="#059669" opacity="0.5"/>
-        <circle cx="28" cy="42" r="2" fill="#059669" opacity="0.4"/>
-        <rect x="22" y="6" width="4" height="3" rx="1" fill="#059669" opacity="0.6"/>
-        <rect x="38" y="2" width="4" height="3" rx="1" fill="#059669" opacity="0.6"/>
-      </svg>
-    ),
-    illustration: "🔬",
-    bgPattern: "lab",
+    accentLight: "#ecfdf5",
+    accentBorder: "#6ee7b7",
+    accentDark: "#047857",
+    image: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1400&q=80",
+    imageFallback: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1400&q=80",
+    tag: "Science & Research",
   },
   ROOM: {
     label: "Room",
     accent: "#2563eb",
-    soft: "#eff6ff",
-    border: "#93c5fd",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="20" width="48" height="36" rx="3" fill="#2563eb" opacity="0.1" stroke="#2563eb" strokeWidth="1.5"/>
-        <path d="M8 20 L32 6 L56 20" stroke="#2563eb" strokeWidth="1.5" fill="#2563eb" opacity="0.15"/>
-        <rect x="26" y="38" width="12" height="18" rx="2" fill="#2563eb" opacity="0.2" stroke="#2563eb" strokeWidth="1"/>
-        <rect x="14" y="28" width="10" height="8" rx="1" fill="#2563eb" opacity="0.3"/>
-        <rect x="40" y="28" width="10" height="8" rx="1" fill="#2563eb" opacity="0.3"/>
-        <circle cx="31" cy="47" r="1.5" fill="#2563eb" opacity="0.6"/>
-      </svg>
-    ),
-    illustration: "🏛️",
-    bgPattern: "room",
+    accentLight: "#eff6ff",
+    accentBorder: "#93c5fd",
+    accentDark: "#1d4ed8",
+    image: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=1400&q=80",
+    imageFallback: "https://images.unsplash.com/photo-1562774053-701939374585?w=1400&q=80",
+    tag: "Campus Facility",
   },
   EQUIPMENT: {
     label: "Equipment",
     accent: "#7c3aed",
-    soft: "#f5f3ff",
-    border: "#c4b5fd",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="32" r="18" stroke="#7c3aed" strokeWidth="1.5" fill="#7c3aed" opacity="0.08"/>
-        <circle cx="32" cy="32" r="8" fill="#7c3aed" opacity="0.2" stroke="#7c3aed" strokeWidth="1.5"/>
-        <circle cx="32" cy="32" r="3" fill="#7c3aed" opacity="0.7"/>
-        <path d="M32 14 L32 20" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M32 44 L32 50" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M14 32 L20 32" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M44 32 L50 32" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M19.5 19.5 L23.7 23.7" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M40.3 40.3 L44.5 44.5" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M44.5 19.5 L40.3 23.7" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M23.7 40.3 L19.5 44.5" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round"/>
-      </svg>
-    ),
-    illustration: "⚙️",
-    bgPattern: "equip",
+    accentLight: "#f5f3ff",
+    accentBorder: "#c4b5fd",
+    accentDark: "#6d28d9",
+    image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1400&q=80",
+    imageFallback: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1400&q=80",
+    tag: "Device & Tool",
   },
 };
+
+const DEFAULT_CONFIG = TYPE_CONFIG.ROOM;
 
 export default function ResourceDetailsPage() {
   const { id } = useParams();
@@ -74,6 +45,7 @@ export default function ResourceDetailsPage() {
   const [resource, setResource] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     const fetchResource = async () => {
@@ -92,9 +64,9 @@ export default function ResourceDetailsPage() {
   if (loading) {
     return (
       <div className="rd-page">
-        <div className="rd-loading">
+        <div className="rd-state-screen">
           <div className="rd-spinner" />
-          <p>Loading resource details…</p>
+          <p>Loading resource…</p>
         </div>
       </div>
     );
@@ -103,133 +75,207 @@ export default function ResourceDetailsPage() {
   if (error || !resource) {
     return (
       <div className="rd-page">
-        <div className="rd-loading">
+        <div className="rd-state-screen">
           <p>{error || "Resource not found."}</p>
-          <button className="rd-back-btn" onClick={() => navigate(-1)}>← Go Back</button>
+          <button className="rd-ghost-btn" onClick={() => navigate(-1)}>← Go Back</button>
         </div>
       </div>
     );
   }
 
-  const config = TYPE_CONFIG[resource.type] ?? TYPE_CONFIG.ROOM;
+  const cfg = TYPE_CONFIG[resource.type] ?? DEFAULT_CONFIG;
   const isActive = resource.status === "ACTIVE";
+  const imgSrc = imgError ? cfg.imageFallback : cfg.image;
 
   return (
-    <div className="rd-page">
-      {/* ── Dark hero strip ── */}
-      <div className="rd-hero-strip">
-        <div className="rd-hero-inner">
-          <button className="rd-back-btn" onClick={() => navigate(-1)}>
-            ← Back to Catalogue
+    <div
+      className="rd-page"
+      style={{
+        "--rd-accent": cfg.accent,
+        "--rd-accent-light": cfg.accentLight,
+        "--rd-accent-border": cfg.accentBorder,
+        "--rd-accent-dark": cfg.accentDark,
+      }}
+    >
+      {/* ── Full-width image cover ── */}
+      <div className="rd-cover">
+        <img
+          src={imgSrc}
+          alt={cfg.label}
+          className="rd-cover-img"
+          onError={() => setImgError(true)}
+        />
+        <div className="rd-cover-overlay" />
+
+        {/* nav inside hero */}
+        <div className="rd-cover-nav">
+          <button className="rd-nav-back" onClick={() => navigate(-1)}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Back to Catalogue
           </button>
-          <div className="rd-hero-badge" style={{ color: config.accent, borderColor: config.border, background: config.soft }}>
-            {config.label}
+          <div className="rd-nav-tag" style={{ background: cfg.accentLight, color: cfg.accentDark, borderColor: cfg.accentBorder }}>
+            {cfg.tag}
           </div>
-          <h1 className="rd-hero-title">{resource.name}</h1>
-          <p className="rd-hero-sub">Campus Resource · {resource.location}</p>
+        </div>
+
+        {/* hero text */}
+        <div className="rd-cover-content">
+          <div className="rd-cover-type" style={{ background: cfg.accent }}>
+            {cfg.label}
+          </div>
+          <h1 className="rd-cover-title">{resource.name}</h1>
+          <div className="rd-cover-location">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor" />
+            </svg>
+            {resource.location}
+          </div>
+        </div>
+
+        {/* floating status pill */}
+        <div className={`rd-float-status ${isActive ? "rd-float-active" : "rd-float-inactive"}`}>
+          <span className="rd-float-dot" />
+          {isActive ? "Available" : "Out of Service"}
         </div>
       </div>
 
-      {/* ── Main content ── */}
-      <div className="rd-content-wrap">
-        <div className="rd-layout">
+      {/* ── Page body ── */}
+      <div className="rd-body">
 
-          {/* ── Left: Visual panel ── */}
-          <div className="rd-visual-panel" style={{ "--accent": config.accent, "--soft": config.soft, "--border-c": config.border }}>
-            <div className={`rd-visual-bg rd-bg-${config.bgPattern}`}>
-              <div className="rd-visual-icon">{config.icon}</div>
-              <div className="rd-visual-emoji">{config.illustration}</div>
+        {/* quick stats bar */}
+        <div className="rd-stats-bar">
+          <div className="rd-stat-item">
+            <span className="rd-stat-label">Type</span>
+            <span className="rd-stat-val" style={{ color: cfg.accent }}>{resource.type}</span>
+          </div>
+          <div className="rd-stat-div" />
+          <div className="rd-stat-item">
+            <span className="rd-stat-label">Location</span>
+            <span className="rd-stat-val">{resource.location}</span>
+          </div>
+          <div className="rd-stat-div" />
+          <div className="rd-stat-item">
+            <span className="rd-stat-label">Capacity</span>
+            <span className="rd-stat-val">{resource.capacity != null ? `${resource.capacity} people` : "N/A"}</span>
+          </div>
+          <div className="rd-stat-div" />
+          <div className="rd-stat-item">
+            <span className="rd-stat-label">Status</span>
+            <span className={`rd-stat-status ${isActive ? "rd-s-active" : "rd-s-inactive"}`}>
+              <span className="rd-dot-sm" />
+              {isActive ? "Active" : "Inactive"}
+            </span>
+          </div>
+        </div>
+
+        {/* main two-column grid */}
+        <div className="rd-grid">
+
+          {/* LEFT: main content */}
+          <div className="rd-main">
+            <div className="rd-about-card">
+              <div className="rd-about-stripe" style={{ background: cfg.accent }} />
+              <h2 className="rd-about-title">About this Resource</h2>
+              <p className="rd-about-desc">
+                {resource.description || "No description has been provided for this campus resource."}
+              </p>
             </div>
 
-            <div className="rd-visual-status">
-              <div className={`rd-status-dot ${isActive ? "rd-dot-active" : "rd-dot-inactive"}`} />
-              <span className={isActive ? "rd-status-active" : "rd-status-inactive"}>
-                {resource.status?.replace(/_/g, " ")}
-              </span>
-            </div>
-
-            <div className="rd-visual-meta">
-              <div className="rd-meta-pill">
-                <span className="rd-meta-label">Type</span>
-                <span className="rd-meta-value" style={{ color: config.accent }}>{resource.type}</span>
-              </div>
-              {resource.capacity != null && (
-                <div className="rd-meta-pill">
-                  <span className="rd-meta-label">Capacity</span>
-                  <span className="rd-meta-value">{resource.capacity}</span>
+            <div className="rd-detail-grid">
+              <div className="rd-detail-box">
+                <div className="rd-detail-icon" style={{ background: cfg.accentLight, color: cfg.accent }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8" /><path d="M3 9h18M9 21V9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
                 </div>
-              )}
+                <span className="rd-detail-label">Type</span>
+                <span className="rd-detail-val" style={{ color: cfg.accent }}>{resource.type}</span>
+              </div>
+              <div className="rd-detail-box">
+                <div className="rd-detail-icon" style={{ background: cfg.accentLight, color: cfg.accent }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor" /></svg>
+                </div>
+                <span className="rd-detail-label">Location</span>
+                <span className="rd-detail-val">{resource.location}</span>
+              </div>
+              <div className="rd-detail-box">
+                <div className="rd-detail-icon" style={{ background: cfg.accentLight, color: cfg.accent }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.8" /><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+                </div>
+                <span className="rd-detail-label">Capacity</span>
+                <span className="rd-detail-val">{resource.capacity != null ? resource.capacity : "N/A"}</span>
+              </div>
+              <div className="rd-detail-box">
+                <div className="rd-detail-icon" style={{ background: isActive ? "#ecfdf5" : "#fff5f5", color: isActive ? "#059669" : "#dc2626" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" /><path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+                </div>
+                <span className="rd-detail-label">Status</span>
+                <span className="rd-detail-val" style={{ color: isActive ? "#059669" : "#dc2626" }}>
+                  {resource.status?.replace(/_/g, " ")}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* ── Right: Details ── */}
-          <div className="rd-details-panel">
+          {/* RIGHT: sidebar */}
+          <div className="rd-sidebar">
 
-            <div className="rd-detail-card">
-              <div className="rd-card-label">Resource Name</div>
-              <div className="rd-card-value rd-card-name">{resource.name}</div>
-            </div>
-
-            <div className="rd-detail-row">
-              <div className="rd-detail-card">
-                <div className="rd-card-label">Type</div>
-                <div className="rd-card-value">
-                  <span className="rd-type-badge" style={{ color: config.accent, background: config.soft, borderColor: config.border }}>
-                    {resource.type}
-                  </span>
+            {/* capacity highlight */}
+            {resource.capacity != null && (
+              <div className="rd-capacity-card" style={{ borderTopColor: cfg.accent }}>
+                <div className="rd-capacity-label">Maximum Capacity</div>
+                <div className="rd-capacity-num" style={{ color: cfg.accent }}>{resource.capacity}</div>
+                <div className="rd-capacity-sub">people</div>
+                <div className="rd-cap-bar-bg">
+                  <div
+                    className="rd-cap-bar-fill"
+                    style={{ background: cfg.accent, width: `${Math.min(100, (resource.capacity / 200) * 100)}%` }}
+                  />
                 </div>
               </div>
-              <div className="rd-detail-card">
-                <div className="rd-card-label">Status</div>
-                <div className="rd-card-value">
-                  <span className={`rd-status-badge ${isActive ? "rd-badge-active" : "rd-badge-inactive"}`}>
-                    <span className={`rd-status-dot ${isActive ? "rd-dot-active" : "rd-dot-inactive"}`} />
-                    {resource.status?.replace(/_/g, " ")}
-                  </span>
-                </div>
-              </div>
-            </div>
+            )}
 
-            <div className="rd-detail-row">
-              <div className="rd-detail-card">
-                <div className="rd-card-label">Location</div>
-                <div className="rd-card-value">
-                  <span className="rd-icon-row">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/></svg>
-                    {resource.location}
-                  </span>
-                </div>
+            {/* quick info */}
+            <div className="rd-info-card">
+              <div className="rd-info-row">
+                <span className="rd-info-label">Resource ID</span>
+                <span className="rd-info-mono">#{resource.id}</span>
               </div>
-              <div className="rd-detail-card">
-                <div className="rd-card-label">Capacity</div>
-                <div className="rd-card-value rd-capacity-value">
-                  {resource.capacity != null ? (
-                    <>
-                      <span className="rd-capacity-num">{resource.capacity}</span>
-                      <span className="rd-capacity-unit">people</span>
-                    </>
-                  ) : "N/A"}
-                </div>
+              <div className="rd-info-hr" />
+              <div className="rd-info-row">
+                <span className="rd-info-label">Category</span>
+                <span className="rd-info-badge" style={{ background: cfg.accentLight, color: cfg.accentDark, borderColor: cfg.accentBorder }}>
+                  {cfg.label}
+                </span>
+              </div>
+              <div className="rd-info-hr" />
+              <div className="rd-info-row">
+                <span className="rd-info-label">Availability</span>
+                <span style={{ color: isActive ? "#059669" : "#dc2626", fontWeight: 600, fontSize: "0.84rem" }}>
+                  {isActive ? "Available Now" : "Unavailable"}
+                </span>
               </div>
             </div>
 
-            <div className="rd-detail-card rd-desc-card">
-              <div className="rd-card-label">Description</div>
-              <div className="rd-card-value rd-desc-value">
-                {resource.description || "No description provided for this resource."}
-              </div>
-            </div>
-
-            <div className="rd-actions">
-              <button className="rd-action-primary" onClick={() => navigate(-1)}>
+            {/* actions */}
+            <div className="rd-action-stack">
+              <button
+                className="rd-btn-primary"
+                style={{ background: cfg.accent }}
+                onClick={() => navigate(-1)}
+              >
                 ← Back to Catalogue
               </button>
-              <button className="rd-action-secondary" onClick={() => navigate("/manage-resources")}>
+              <button
+                className="rd-btn-secondary"
+                style={{ color: cfg.accent, borderColor: cfg.accentBorder, background: cfg.accentLight }}
+                onClick={() => navigate("/manage-resources")}
+              >
                 Manage Resources
               </button>
             </div>
-          </div>
 
+          </div>
         </div>
       </div>
     </div>
