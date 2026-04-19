@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  getTechnicianTicketImages,
-  getTechnicianTickets,
-  updateTechnicianResolution,
-  updateTechnicianTicketStatus,
+  getAllTicketsForAdmin,
+  getAdminTicketImages,
+  assignTechnician,
 } from "../../services/ticketService";
 
-function TechnicianTicketDetailsPage() {
+function AdminTicketDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [ticket, setTicket] = useState(null);
   const [images, setImages] = useState([]);
-  const [resolutionNotes, setResolutionNotes] = useState("");
+  const [technicianId, setTechnicianId] = useState("");
   const [loading, setLoading] = useState(true);
-  const [resolveLoading, setResolveLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [assignLoading, setAssignLoading] = useState(false);
 
   useEffect(() => {
     fetchTicketDetails();
@@ -28,7 +27,7 @@ function TechnicianTicketDetailsPage() {
       setLoading(true);
       setErrorMessage("");
 
-      const tickets = await getTechnicianTickets();
+      const tickets = await getAllTicketsForAdmin();
       const selectedTicket = tickets.find((t) => String(t.id) === String(id));
 
       if (!selectedTicket) {
@@ -39,53 +38,41 @@ function TechnicianTicketDetailsPage() {
 
       setTicket(selectedTicket);
 
-      const imageData = await getTechnicianTicketImages(id);
+      const imageData = await getAdminTicketImages(id);
       setImages(imageData);
     } catch (error) {
-      console.error("Failed to load technician ticket details:", error);
+      console.error("Failed to load admin ticket details:", error);
       setErrorMessage("Failed to load ticket details.");
     } finally {
       setLoading(false);
     }
   };
 
-  
-  const handleResolveTicket = async () => {
-    if (!resolutionNotes.trim()) {
-        setErrorMessage("Resolution notes are required.");
-        return;
+  const handleAssignTechnician = async () => {
+    if (!technicianId) {
+      setErrorMessage("Please select a technician.");
+      return;
     }
 
     try {
-        setResolveLoading(true);
-        setErrorMessage("");
-        setSuccessMessage("");
+      setAssignLoading(true);
+      setErrorMessage("");
+      setSuccessMessage("");
 
-        await updateTechnicianResolution(id, resolutionNotes);
-        await updateTechnicianTicketStatus(id, "RESOLVED");
+      await assignTechnician(id, Number(technicianId));
 
-        setSuccessMessage("Ticket resolved successfully.");
+      setSuccessMessage("Technician assigned successfully.");
 
-        const updatedTickets = await getTechnicianTickets();
-        const updatedTicket = updatedTickets.find((t) => String(t.id) === String(id));
-        setTicket(updatedTicket);
+      const updatedTickets = await getAllTicketsForAdmin();
+      const updatedTicket = updatedTickets.find((t) => String(t.id) === String(id));
+      setTicket(updatedTicket);
     } catch (error) {
-        console.error("Failed to resolve ticket:", error);
-        console.error("Backend response:", error.response);
-
-        if (error.response?.data?.message) {
-        setErrorMessage(error.response.data.message);
-        } else if (error.response?.data?.error) {
-        setErrorMessage(error.response.data.error);
-        } else {
-        setErrorMessage("Failed to resolve ticket.");
-        }
+      console.error("Failed to assign technician:", error);
+      setErrorMessage("Failed to assign technician.");
     } finally {
-        setResolveLoading(false);
+      setAssignLoading(false);
     }
-    };
-
-
+  };
 
   if (loading) {
     return (
@@ -100,8 +87,8 @@ function TechnicianTicketDetailsPage() {
       <div style={styles.page}>
         <div style={styles.container}>
           <p style={styles.error}>{errorMessage}</p>
-          <button style={styles.backButton} onClick={() => navigate("/technician/tickets")}>
-            Back to Assigned Tickets
+          <button style={styles.backButton} onClick={() => navigate("/admin/tickets")}>
+            Back to All Tickets
           </button>
         </div>
       </div>
@@ -111,8 +98,8 @@ function TechnicianTicketDetailsPage() {
   return (
     <div style={styles.page}>
       <div style={styles.container}>
-        <button style={styles.backButton} onClick={() => navigate("/technician/tickets")}>
-          ← Back to Assigned Tickets
+        <button style={styles.backButton} onClick={() => navigate("/admin/tickets")}>
+          ← Back to All Tickets
         </button>
 
         <div style={styles.card}>
@@ -157,6 +144,33 @@ function TechnicianTicketDetailsPage() {
           </div>
 
           <div style={styles.section}>
+            <h3 style={styles.sectionTitle}>Assign Technician</h3>
+
+            <div style={styles.assignRow}>
+              <select
+                value={technicianId}
+                onChange={(e) => setTechnicianId(e.target.value)}
+                style={styles.select}
+              >
+                <option value="">Select Technician</option>
+                <option value="3">Technician 3</option>
+                <option value="4">Technician 4</option>
+              </select>
+
+              <button
+                style={styles.assignButton}
+                onClick={handleAssignTechnician}
+                disabled={assignLoading}
+              >
+                {assignLoading ? "Assigning..." : "Assign Technician"}
+              </button>
+            </div>
+
+            {errorMessage && <p style={styles.error}>{errorMessage}</p>}
+            {successMessage && <p style={styles.success}>{successMessage}</p>}
+          </div>
+
+          <div style={styles.section}>
             <h3 style={styles.sectionTitle}>Uploaded Images</h3>
 
             {images.length === 0 ? (
@@ -178,34 +192,6 @@ function TechnicianTicketDetailsPage() {
                 ))}
               </div>
             )}
-          </div>
-
-          <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Resolve Ticket</h3>
-
-            <textarea
-              value={resolutionNotes}
-              onChange={(e) => setResolutionNotes(e.target.value)}
-              placeholder="Enter resolution notes"
-              rows="5"
-              style={styles.textarea}
-              disabled={ticket.status === "RESOLVED"}
-            />
-
-            {errorMessage && <p style={styles.error}>{errorMessage}</p>}
-            {successMessage && <p style={styles.success}>{successMessage}</p>}
-
-            <button
-              style={styles.resolveButton}
-              onClick={handleResolveTicket}
-              disabled={resolveLoading || ticket.status === "RESOLVED"}
-            >
-              {ticket.status === "RESOLVED"
-                ? "Already Resolved"
-                : resolveLoading
-                ? "Resolving..."
-                : "Resolve Ticket"}
-            </button>
           </div>
         </div>
       </div>
@@ -316,6 +302,28 @@ const styles = {
     color: "#111827",
     fontWeight: "700",
   },
+  assignRow: {
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap",
+    alignItems: "center",
+  },
+  select: {
+    padding: "12px 14px",
+    borderRadius: "12px",
+    border: "1px solid #d1d5db",
+    background: "#6e6e6e",
+    minWidth: "220px",
+  },
+  assignButton: {
+    padding: "12px 18px",
+    border: "none",
+    borderRadius: "12px",
+    background: "#960019",
+    color: "#ffffff",
+    fontWeight: "600",
+    cursor: "pointer",
+  },
   imageGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
@@ -353,25 +361,6 @@ const styles = {
     margin: 0,
     color: "#6b7280",
   },
-  textarea: {
-    width: "100%",
-    padding: "12px 14px",
-    borderRadius: "12px",
-    border: "1px solid #d1d5db",
-    background: "#a6a6a6",
-    resize: "vertical",
-    marginBottom: "14px",
-    boxSizing: "border-box",
-  },
-  resolveButton: {
-    padding: "12px 18px",
-    border: "none",
-    borderRadius: "12px",
-    background: "#111827",
-    color: "#ffffff",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
   info: {
     color: "#ffffff",
     fontSize: "16px",
@@ -388,4 +377,4 @@ const styles = {
   },
 };
 
-export default TechnicianTicketDetailsPage;
+export default AdminTicketDetailsPage;
