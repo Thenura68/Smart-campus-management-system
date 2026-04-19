@@ -79,7 +79,7 @@ function TicketForm() {
   };
 
   return (
-    <div className="soft-page">
+    <div className="rd-page">
 
        <section className="mini-hero">
         <div className="mini-hero-content">
@@ -87,7 +87,7 @@ function TicketForm() {
           <p>Submit an issue and our team will assist you.</p>
         </div>
       </section>
-      <section className="catalogue-shell">
+      <div className="create-wrapper">
 
         <div className="create-card">
 
@@ -173,7 +173,7 @@ function TicketForm() {
 
         </div>
 
-      </section>
+      </div>
     </div>
   );
 }
