@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getTicketImages, getUserTickets } from "../../services/ticketService";
+import "./TicketDetailsPage.css";
 
 function TicketDetailsPage() {
   const { id } = useParams();
@@ -43,241 +44,173 @@ function TicketDetailsPage() {
 
   if (loading) {
     return (
-      <div style={styles.page}>
-        <p style={styles.info}>Loading ticket details...</p>
+      <div className="rd-page">
+        <div className="rd-state-screen">
+          <div className="rd-spinner" />
+          <p>Loading ticket details...</p>
+        </div>
       </div>
     );
   }
 
   if (errorMessage) {
     return (
-      <div style={styles.page}>
-        <div style={styles.container}>
-          <p style={styles.error}>{errorMessage}</p>
-          <button style={styles.backButton} onClick={() => navigate("/user/tickets")}>
-            Back to My Tickets
+      <div className="rd-page">
+        <div className="rd-state-screen">
+          <p>{errorMessage}</p>
+          <button className="rd-ghost-btn" onClick={() => navigate("/user/tickets")}>
+            ← Back to Tickets
           </button>
         </div>
       </div>
     );
   }
 
+
+  
+
   return (
-    <div style={styles.page}>
-      <div style={styles.container}>
-        <button style={styles.backButton} onClick={() => navigate("/user/tickets")}>
-          ← Back to My Tickets
+  <div className="rd-page">
+
+    {/* HERO */}
+    <div className="rd-cover">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGNe3k_99i5RVynM5gvSTdZNrfdYOIM5BVug&s"
+        className="rd-cover-img"
+      />
+      <div className="rd-cover-overlay" />
+
+      <div className="rd-cover-nav">
+        <button className="rd-nav-back" onClick={() => navigate("/user/tickets")}>
+          ← Back to Tickets
         </button>
 
-        <div style={styles.card}>
-          <div style={styles.header}>
-            <div>
-              <h1 style={styles.title}>{ticket.title}</h1>
-              <p style={styles.subtitle}>Ticket ID: {ticket.id}</p>
-            </div>
+        <div className="rd-nav-tag">
+          SUPPORT TICKET
+        </div>
+      </div>
 
-            <span style={getStatusStyle(ticket.status)}>
-              {ticket.status}
-            </span>
+      <div className="rd-cover-content">
+        <div className="rd-cover-type">TICKET</div>
+
+        <h1 className="rd-cover-title">
+          {ticket.title}
+        </h1>
+
+        <div className="rd-cover-location">
+          Ticket ID: #{ticket.id}
+        </div>
+      </div>
+
+      <div className={`rd-float-status ${
+        ticket.status === "RESOLVED"
+          ? "rd-float-active"
+          : "rd-float-inactive"
+      }`}>
+        <span className="rd-float-dot" />
+        {ticket.status}
+      </div>
+    </div>
+
+    {/* BODY */}
+    <div className="rd-body">
+
+      {/* STATS BAR */}
+      <div className="rd-stats-bar">
+        <div className="rd-stat-item">
+          <span className="rd-stat-label">Priority</span>
+          <span className="rd-stat-val">{ticket.priority}</span>
+        </div>
+
+        <div className="rd-stat-div" />
+
+        <div className="rd-stat-item">
+          <span className="rd-stat-label">Status</span>
+          <span className="rd-stat-val">{ticket.status}</span>
+        </div>
+
+        <div className="rd-stat-div" />
+
+        <div className="rd-stat-item">
+          <span className="rd-stat-label">Ticket ID</span>
+          <span className="rd-stat-val">#{ticket.id}</span>
+        </div>
+      </div>
+
+      {/* GRID */}
+      <div className="rd-grid">
+
+        {/* LEFT */}
+        <div className="rd-main">
+
+          <div className="rd-about-card">
+            <div className="rd-about-stripe" />
+            <h2 className="rd-about-title">Description</h2>
+            <p className="rd-about-desc">
+              {ticket.description}
+            </p>
           </div>
 
-          <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Description</h3>
-            <p style={styles.text}>{ticket.description}</p>
-          </div>
-
-          <div style={styles.metaGrid}>
-            <div style={styles.metaBox}>
-              <span style={styles.metaLabel}>Priority</span>
-              <span style={styles.metaValue}>{ticket.priority}</span>
-            </div>
-
-            <div style={styles.metaBox}>
-              <span style={styles.metaLabel}>Status</span>
-              <span style={styles.metaValue}>{ticket.status}</span>
-            </div>
-          </div>
-
-          <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Uploaded Images</h3>
+          <div className="rd-about-card">
+            <h2 className="rd-about-title">Uploaded Images</h2>
 
             {images.length === 0 ? (
-              <p style={styles.noImages}>No images uploaded for this ticket.</p>
+              <p>No images uploaded.</p>
             ) : (
-              <div style={styles.imageGrid}>
-                {images.map((image) => (
-                  <div key={image.id} style={styles.imageCard}>
-                    <img
-                      src={image.imageUrl}
-                      alt={image.fileName}
-                      style={styles.image}
-                    />
-                    <div style={styles.imageInfo}>
-                      <p style={styles.imageName}>{image.fileName}</p>
-                      <p style={styles.imageMeta}>
-                        Size: {image.fileSize} bytes
-                      </p>
-                    </div>
-                  </div>
+              <div className="rd-detail-grid">
+                {images.map((img) => (
+                  <img
+                    key={img.id}
+                    src={img.imageUrl}
+                    style={{ width: "100%", borderRadius: "12px" }}
+                  />
                 ))}
               </div>
             )}
           </div>
+
         </div>
+
+        {/* RIGHT */}
+        <div className="rd-sidebar">
+
+          <div className="rd-info-card">
+            <div className="rd-info-row">
+              <span className="rd-info-label">Ticket ID</span>
+              <span className="rd-info-mono">#{ticket.id}</span>
+            </div>
+
+            <div className="rd-info-hr" />
+
+            <div className="rd-info-row">
+              <span className="rd-info-label">Priority</span>
+              <span>{ticket.priority}</span>
+            </div>
+
+            <div className="rd-info-hr" />
+
+            <div className="rd-info-row">
+              <span className="rd-info-label">Status</span>
+              <span>{ticket.status}</span>
+            </div>
+          </div>
+
+          <div className="rd-action-stack">
+            <button
+              className="rd-btn-primary"
+              style={{ background: "#2563eb" }}
+              onClick={() => navigate("/user/tickets")}
+            >
+              ← Back to Tickets
+            </button>
+          </div>
+
+        </div>
+
       </div>
     </div>
-  );
-}
-
-const getStatusStyle = (status) => {
-  return {
-    padding: "8px 14px",
-    borderRadius: "999px",
-    fontSize: "13px",
-    fontWeight: "600",
-    backgroundColor:
-      status === "RESOLVED"
-        ? "#dcfce7"
-        : status === "PENDING"
-        ? "#fef3c7"
-        : "#dbeafe",
-    color:
-      status === "RESOLVED"
-        ? "#166534"
-        : status === "PENDING"
-        ? "#92400e"
-        : "#1d4ed8",
-    height: "fit-content",
-  };
-};
-
-const styles = {
-  page: {
-    minHeight: "100vh",
-    background: "#1f1f1f",
-    padding: "40px 20px",
-  },
-  container: {
-    maxWidth: "1000px",
-    margin: "0 auto",
-  },
-  backButton: {
-    marginBottom: "20px",
-    padding: "10px 16px",
-    border: "none",
-    borderRadius: "10px",
-    background: "#374151",
-    color: "#ffffff",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
-  card: {
-    background: "#ffffff",
-    borderRadius: "18px",
-    padding: "28px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.18)",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: "16px",
-    marginBottom: "24px",
-    flexWrap: "wrap",
-  },
-  title: {
-    margin: "0 0 6px 0",
-    fontSize: "30px",
-    color: "#111827",
-  },
-  subtitle: {
-    margin: 0,
-    color: "#6b7280",
-  },
-  section: {
-    marginBottom: "24px",
-  },
-  sectionTitle: {
-    margin: "0 0 12px 0",
-    fontSize: "20px",
-    color: "#111827",
-  },
-  text: {
-    margin: 0,
-    color: "#374151",
-    lineHeight: "1.6",
-  },
-  metaGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-    gap: "16px",
-    marginBottom: "28px",
-  },
-  metaBox: {
-    background: "#f9fafb",
-    border: "1px solid #e5e7eb",
-    borderRadius: "14px",
-    padding: "16px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px",
-  },
-  metaLabel: {
-    fontSize: "13px",
-    color: "#6b7280",
-    fontWeight: "600",
-  },
-  metaValue: {
-    fontSize: "16px",
-    color: "#111827",
-    fontWeight: "700",
-  },
-  imageGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-    gap: "18px",
-  },
-  imageCard: {
-    border: "1px solid #e5e7eb",
-    borderRadius: "16px",
-    overflow: "hidden",
-    background: "#ffffff",
-    boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
-  },
-  image: {
-    width: "100%",
-    height: "220px",
-    objectFit: "cover",
-    display: "block",
-    background: "#f3f4f6",
-  },
-  imageInfo: {
-    padding: "14px",
-  },
-  imageName: {
-    margin: "0 0 6px 0",
-    fontWeight: "600",
-    color: "#111827",
-    wordBreak: "break-word",
-  },
-  imageMeta: {
-    margin: 0,
-    fontSize: "13px",
-    color: "#6b7280",
-  },
-  noImages: {
-    margin: 0,
-    color: "#6b7280",
-  },
-  info: {
-    color: "#ffffff",
-    fontSize: "16px",
-  },
-  error: {
-    color: "#f87171",
-    fontSize: "16px",
-    marginBottom: "16px",
-  },
+  </div>
+);
 };
 
 export default TicketDetailsPage;
