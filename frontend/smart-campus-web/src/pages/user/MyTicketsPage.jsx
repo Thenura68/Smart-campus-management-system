@@ -95,9 +95,18 @@ return (
       {/* CONTENT */}
       <section className="catalogue-shell">
 
-        <div className="catalogue-header">
-          <h2>Your Tickets</h2>
-          <p>View, track and manage your tickets.</p>
+        <div className="catalogue-header ticket-header">
+          <div>
+            <h2>Your Tickets</h2>
+            <p>View, track and manage your tickets.</p>
+          </div>
+
+          <button
+            className="create-ticket-btn"
+            onClick={() => navigate("/user/tickets/create")}
+          >
+            + Create Ticket
+          </button>
         </div>
 
         {loading && <div className="catalogue-message">Loading tickets...</div>}

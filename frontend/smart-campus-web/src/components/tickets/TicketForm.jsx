@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createTicket } from "../../services/ticketService";
+import "./TicketForm.css";
 
 function TicketForm() {
   const [title, setTitle] = useState("");
@@ -78,210 +79,105 @@ function TicketForm() {
   };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        <div style={styles.header}>
-          <h2 style={styles.title}>Create Support Ticket</h2>
-          <p style={styles.subtitle}>
-            Report an issue and attach up to 3 images if needed.
-          </p>
+    <div className="soft-page">
+
+       <section className="mini-hero">
+        <div className="mini-hero-content">
+          <h1>Create New Ticket</h1>
+          <p>Submit an issue and our team will assist you.</p>
         </div>
+      </section>
+      <section className="catalogue-shell">
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <div style={styles.field}>
-            <label style={styles.label}>Title</label>
-            <input
-              type="text"
-              placeholder="Enter ticket title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              style={styles.input}
-            />
+        <div className="create-card">
+
+          <div className="create-header">
+            <h2>Create Support Ticket</h2>
+            <p>Report an issue and attach up to 3 images if needed.</p>
           </div>
 
-          <div style={styles.field}>
-            <label style={styles.label}>Description</label>
-            <textarea
-              placeholder="Describe the issue clearly"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows="5"
-              style={styles.textarea}
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="create-form">
 
-          <div style={styles.row}>
-            <div style={styles.field}>
-              <label style={styles.label}>Priority</label>
-              <select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
-                style={styles.input}
-              >
-                <option value="">Select priority</option>
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
-              </select>
-            </div>
-
-            <div style={styles.field}>
-              <label style={styles.label}>Resource ID</label>
+            <div className="field">
+              <label>Title</label>
               <input
-                type="number"
-                placeholder="Optional"
-                value={resourceId}
-                onChange={(e) => setResourceId(e.target.value)}
-                style={styles.input}
+                type="text"
+                placeholder="Enter ticket title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
-          </div>
 
-          <div style={styles.field}>
-            <label style={styles.label}>Upload Images</label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-              style={styles.fileInput}
-            />
-            <small style={styles.helperText}>Maximum 3 images allowed.</small>
+            <div className="field">
+              <label>Description</label>
+              <textarea
+                placeholder="Describe the issue clearly"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows="5"
+              />
+            </div>
 
-            {images.length > 0 && (
-              <div style={styles.fileList}>
-                {images.map((image, index) => (
-                  <div key={index} style={styles.fileItem}>
-                    {image.name}
-                  </div>
-                ))}
+            <div className="form-row">
+              <div className="field">
+                <label>Priority</label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                >
+                  <option value="">Select priority</option>
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                </select>
               </div>
-            )}
-          </div>
 
-          {errorMessage && <p style={styles.error}>{errorMessage}</p>}
-          {successMessage && <p style={styles.success}>{successMessage}</p>}
+              <div className="field">
+                <label>Resource ID</label>
+                <input
+                  type="number"
+                  placeholder="Optional"
+                  value={resourceId}
+                  onChange={(e) => setResourceId(e.target.value)}
+                />
+              </div>
+            </div>
 
-          <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? "Creating..." : "Create Ticket"}
-          </button>
-        </form>
-      </div>
+            <div className="field">
+              <label>Upload Images</label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+              />
+              <small>Maximum 3 images allowed.</small>
+
+              {images.length > 0 && (
+                <div className="file-list">
+                  {images.map((img, i) => (
+                    <div key={i}>{img.name}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {errorMessage && <p className="error">{errorMessage}</p>}
+            {successMessage && <p className="success">{successMessage}</p>}
+
+            <button type="submit" disabled={loading}>
+              {loading ? "Creating..." : "Create Ticket"}
+            </button>
+
+          </form>
+
+        </div>
+
+      </section>
     </div>
   );
 }
 
-const styles = {
-  page: {
-    minHeight: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "48px 20px",
-    background: "#1f1f1f",
-  },
-  card: {
-    width: "100%",
-    maxWidth: "720px",
-    background: "#ffffff",
-    borderRadius: "18px",
-    padding: "32px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.20)",
-  },
-  header: {
-    marginBottom: "24px",
-  },
-  title: {
-    margin: "0 0 8px 0",
-    fontSize: "28px",
-    color: "#111827",
-  },
-  subtitle: {
-    margin: 0,
-    color: "#6b7280",
-    fontSize: "15px",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "18px",
-  },
-  row: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "16px",
-  },
-  field: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  label: {
-    marginBottom: "8px",
-    fontWeight: "600",
-    color: "#111827",
-    fontSize: "14px",
-  },
-  input: {
-    padding: "12px 14px",
-    borderRadius: "12px",
-    border: "1px solid #d1d5db",
-    fontSize: "14px",
-    outline: "none",
-    background: "#6e6e6e",
-  },
-  textarea: {
-    padding: "12px 14px",
-    borderRadius: "12px",
-    border: "1px solid #d1d5db",
-    fontSize: "14px",
-    outline: "none",
-    resize: "vertical",
-    background: "#6e6e6e",
-  },
-  fileInput: {
-    padding: "10px",
-    borderRadius: "12px",
-    border: "1px solid #d1d5db",
-    background: "#f9fafb",
-  },
-  helperText: {
-    marginTop: "6px",
-    color: "#6b7280",
-  },
-  fileList: {
-    marginTop: "10px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-  fileItem: {
-    background: "#f3f4f6",
-    padding: "10px 12px",
-    borderRadius: "10px",
-    fontSize: "14px",
-    color: "#374151",
-  },
-  button: {
-    marginTop: "8px",
-    padding: "14px",
-    border: "none",
-    borderRadius: "12px",
-    background: "#111827",
-    color: "#ffffff",
-    fontSize: "15px",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-  error: {
-    margin: 0,
-    color: "#dc2626",
-    fontSize: "14px",
-  },
-  success: {
-    margin: 0,
-    color: "#16a34a",
-    fontSize: "14px",
-  },
-};
+
 
 export default TicketForm;

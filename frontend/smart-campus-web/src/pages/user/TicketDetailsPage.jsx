@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getTicketImages, getUserTickets } from "../../services/ticketService";
 import "./TicketDetailsPage.css";
+import ticketBg from "../../assets/ticketimage.png";
 
 function TicketDetailsPage() {
   const { id } = useParams();
@@ -75,7 +76,7 @@ function TicketDetailsPage() {
     {/* HERO */}
     <div className="rd-cover">
       <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGNe3k_99i5RVynM5gvSTdZNrfdYOIM5BVug&s"
+        src={ticketBg}
         className="rd-cover-img"
       />
       <div className="rd-cover-overlay" />
