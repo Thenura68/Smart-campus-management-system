@@ -322,3 +322,24 @@
   font-size: 12px;
   color: #6b7280;
 }
+
+.comment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.comment-delete-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.comment-delete-btn:hover {
+  background: #b91c1c;
+}

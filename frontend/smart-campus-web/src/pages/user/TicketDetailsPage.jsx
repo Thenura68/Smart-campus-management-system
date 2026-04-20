@@ -111,6 +111,23 @@ function TicketDetailsPage() {
   };
 
 
+  const handleDeleteComment = async (commentId) => {
+    const confirmed = window.confirm("Delete this comment?");
+    if (!confirmed) return;
+
+    try {
+      await fetch(`http://localhost:8080/api/comments/${commentId}`, {
+        method: "DELETE"
+      });
+
+      // remove from UI instantly
+      setComments((prev) => prev.filter(c => c.id !== commentId));
+
+    } catch (error) {
+      console.error("Failed to delete comment", error);
+    }
+  };
+
   
 
   return (
@@ -219,15 +236,29 @@ function TicketDetailsPage() {
     <p>No comments yet.</p>
   ) : (
       <div className="comments-list">
-            {comments.map((comment) => (
-              <div key={comment.id} className="comment-item">
-                <p className="comment-text">{comment.message}</p>
-                <span className="comment-date">
-                  {new Date(comment.createdAt).toLocaleString()}
-                </span>
+              {comments.map((comment) => (
+                <div key={comment.id} className="comment-item">
+
+                  <div className="comment-top">
+                    <p className="comment-text">{comment.message}</p>
+
+                    <button
+                      className="comment-delete-btn"
+                      onClick={() => handleDeleteComment(comment.id)}
+                    >
+                      Delete
+                    </button>
                   </div>
-                ))}
-              </div>
+
+                  <span className="comment-date">
+                    {comment.createdAt
+                      ? new Date(comment.createdAt).toLocaleString()
+                      : "Just now"}
+                  </span>
+
+                </div>
+              ))}
+            </div>
             )}
           </div>
 
