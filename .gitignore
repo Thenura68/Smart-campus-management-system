@@ -1,0 +1,25 @@
+# Maven / Java build files
+target/
+*.class
+*.jar
+*.war
+
+# Mac OS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+/backend/smart-campus-api/target
+/backend/smart-campus-api/target
+/backend/smart-campus-api/target
+/backend/smart-campus-api/target
+/backend/smart-campus-api/target
