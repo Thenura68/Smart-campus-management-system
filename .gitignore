@@ -18,8 +18,7 @@ node_modules/
 
 # Environment files
 .env
-/backend/smart-campus-api/target
-/backend/smart-campus-api/target
-/backend/smart-campus-api/target
-/backend/smart-campus-api/target
-/backend/smart-campus-api/target
+
+# Local Spring profile
+backend/smart-campus-api/src/main/resources/application-local.properties
+target/
