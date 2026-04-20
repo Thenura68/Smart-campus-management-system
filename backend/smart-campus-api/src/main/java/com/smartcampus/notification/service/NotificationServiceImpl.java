@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.smartcampus.notification.dto.NotificationDTO;
 import com.smartcampus.notification.model.Notification;
 import com.smartcampus.notification.model.NotificationType;
 import com.smartcampus.notification.repository.NotificationRepository;
@@ -33,10 +34,51 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.save(notification);
     }
 
+    
+
     @Override
-    public List<Notification> getAllNotificationsByUserId(Long userId) {
-        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    public List<NotificationDTO> getAllNotificationsByUserId(Long userId) {
+        List<Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+
+        return notifications.stream().map(notification -> {
+            NotificationDTO dto = new NotificationDTO();
+
+            dto.setId(notification.getId());
+            dto.setUserId(notification.getUserId());
+            dto.setType(notification.getType());
+            dto.setMessage(notification.getMessage());
+            dto.setReferenceId(notification.getReferenceId());
+            dto.setIsRead(notification.getIsRead());
+            dto.setCreatedAt(notification.getCreatedAt());
+
+           
+            String url = "";
+
+            switch (notification.getType()) {
+                case TICKET_CREATED:
+                    url = "/admin/tickets/" + notification.getReferenceId();
+                    break;
+
+                case TICKET_ASSIGNED:
+                    url = "/technician/tickets/" + notification.getReferenceId();
+                    break;
+
+                case TICKET_RESOLVED:
+                    url = "/user/tickets/" + notification.getReferenceId();
+                    break;
+
+                default:
+                    url = "/";
+            }
+
+            dto.setTargetUrl(url);
+
+            return dto;
+        }).toList();
     }
+
+
+
 
     @Override
     public List<Notification> getUnreadNotificationsByUserId(Long userId) {

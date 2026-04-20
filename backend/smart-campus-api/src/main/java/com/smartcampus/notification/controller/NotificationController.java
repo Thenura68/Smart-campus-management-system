@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smartcampus.notification.dto.NotificationDTO;
 import com.smartcampus.notification.model.Notification;
 import com.smartcampus.notification.service.NotificationService;
 
@@ -24,7 +25,7 @@ public class NotificationController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Notification>> getAllNotifications(@PathVariable Long userId) {
+    public ResponseEntity<List<NotificationDTO>> getAllNotifications(@PathVariable Long userId) {
         return ResponseEntity.ok(notificationService.getAllNotificationsByUserId(userId));
     }
 
