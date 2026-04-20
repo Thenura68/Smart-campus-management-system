@@ -18,6 +18,9 @@ public class User {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(length = 255)
+    private String password;  // For manual login
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role;
@@ -39,6 +42,7 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
+    // Getters
     public Long getId() {
         return id;
     }
@@ -49,6 +53,10 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public Role getRole() {
@@ -67,6 +75,7 @@ public class User {
         return lastLogin;
     }
 
+    // Setters
     public void setId(Long id) {
         this.id = id;
     }
@@ -79,6 +88,10 @@ public class User {
         this.name = name;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public void setRole(Role role) {
         this.role = role;
     }
@@ -86,7 +99,6 @@ public class User {
     public void setGoogleId(String googleId) {
         this.googleId = googleId;
     }
-
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
