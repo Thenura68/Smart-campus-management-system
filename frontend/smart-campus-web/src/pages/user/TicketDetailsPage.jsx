@@ -12,9 +12,24 @@ function TicketDetailsPage() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [comments, setComments] = useState([]);
+
+
+   const fetchComments = async () => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/comments/ticket/${id}`);
+      const data = await res.json();
+      setComments(data);
+    } catch (error) {
+      console.error("Failed to fetch comments", error);
+    }
+  };
 
   useEffect(() => {
     fetchTicketDetails();
+    fetchComments();
   }, [id]);
 
   const fetchTicketDetails = async () => {
@@ -66,6 +81,34 @@ function TicketDetailsPage() {
       </div>
     );
   }
+
+  const handleAddComment = async () => {
+    if (!commentText.trim()) {
+      alert("Comment cannot be empty");
+      return;
+    }
+
+    try {
+      await fetch(`http://localhost:8080/api/comments/ticket/${ticket.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: commentText
+        })
+      });
+
+      setCommentText("");
+      setShowCommentModal(false);
+      await fetchComments();
+
+      alert("Comment added successfully!");
+
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
 
 
   
@@ -169,6 +212,24 @@ function TicketDetailsPage() {
               </div>
             )}
           </div>
+          <div className="rd-about-card">
+  <h2 className="rd-about-title">Comments</h2>
+
+  {comments.length === 0 ? (
+    <p>No comments yet.</p>
+  ) : (
+      <div className="comments-list">
+            {comments.map((comment) => (
+              <div key={comment.id} className="comment-item">
+                <p className="comment-text">{comment.message}</p>
+                <span className="comment-date">
+                  {new Date(comment.createdAt).toLocaleString()}
+                </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
         </div>
 
@@ -198,6 +259,17 @@ function TicketDetailsPage() {
 
           <div className="rd-action-stack">
             <button
+              className="rd-btn-secondary"
+              style={{
+                background: "#16a34a",
+                color: "#fff",
+                border: "none"
+              }}
+              onClick={() => setShowCommentModal(true)}
+            >
+              + Add Additional Comments
+            </button>
+            <button
               className="rd-btn-primary"
               style={{ background: "#2563eb" }}
               onClick={() => navigate("/user/tickets")}
@@ -210,7 +282,36 @@ function TicketDetailsPage() {
 
       </div>
     </div>
+      {showCommentModal && (
+      <div className="comment-modal-overlay">
+        <div className="comment-modal">
+
+          <h2>Add Comment</h2>
+
+          <textarea
+            placeholder="Write your comment..."
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+          />
+
+          <div className="comment-actions">
+            <button onClick={() => setShowCommentModal(false)}>
+              Cancel
+            </button>
+
+            <button onClick={handleAddComment}>
+              Submit
+            </button>
+          </div>
+
+        </div>
+      </div>
+    )}          
+
+
   </div>
+
+  
 );
 };
 
