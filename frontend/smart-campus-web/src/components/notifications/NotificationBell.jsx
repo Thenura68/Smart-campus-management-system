@@ -1,11 +1,14 @@
 import { useState } from "react";
 import useNotifications from "../../hooks/useNotifications";
+import { useNavigate } from "react-router-dom";
 
 function NotificationBell() {
 
 
-  const userId = 1; // replace later with JWT
+  const userId = 3; // replace with JWT
   const { notifications, unreadCount, deleteNotification } = useNotifications(userId);
+
+  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
 
@@ -77,7 +80,11 @@ function NotificationBell() {
             notifications.slice(0, 5).map(n => (
               <div
                 key={n.id}
-                onClick={() => deleteNotification(n.id)}
+                onClick={() => {
+                  navigate(n.targetUrl);     
+                  deleteNotification(n.id); 
+                  setOpen(false);           // close dropdown
+                }}
                 style={{
                   padding: "12px 14px",
                   borderBottom: "1px solid rgba(255,255,255,0.06)",
