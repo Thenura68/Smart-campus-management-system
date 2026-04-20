@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createTicket } from "../../services/ticketService";
 import "./TicketForm.css";
+import { useNavigate } from "react-router-dom";
 
 function TicketForm() {
   const [title, setTitle] = useState("");
@@ -11,6 +12,7 @@ function TicketForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -70,6 +72,9 @@ function TicketForm() {
       setPriority("");
       setResourceId("");
       setImages([]);
+      setTimeout(() => {
+        navigate("/user/tickets");
+      }, 1500);
     } catch (error) {
       console.error("Ticket creation failed:", error);
       setErrorMessage("Failed to create ticket.");
