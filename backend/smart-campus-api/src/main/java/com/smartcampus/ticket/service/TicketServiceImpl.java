@@ -19,6 +19,7 @@ import com.smartcampus.ticket.dto.TicketResponseDTO;
 import com.smartcampus.ticket.model.Ticket;
 import com.smartcampus.ticket.model.TicketImage;
 import com.smartcampus.ticket.model.TicketStatus;
+import com.smartcampus.ticket.repository.CommentRepository;
 import com.smartcampus.ticket.repository.TicketImageRepository;
 import com.smartcampus.ticket.repository.TicketRepository;
 
@@ -29,12 +30,14 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final TicketImageRepository ticketImageRepository;
     private final NotificationService notificationService;
+    private final CommentRepository commentRepository;
     
 
-    public TicketServiceImpl(TicketRepository ticketRepository,NotificationService notificationService,TicketImageRepository ticketImageRepository) {
+    public TicketServiceImpl(TicketRepository ticketRepository,NotificationService notificationService,TicketImageRepository ticketImageRepository,CommentRepository commentRepository) {
         this.ticketRepository = ticketRepository;
         this.notificationService = notificationService;
         this.ticketImageRepository = ticketImageRepository;
+        this.commentRepository = commentRepository;
 
     }
 
@@ -207,6 +210,7 @@ public class TicketServiceImpl implements TicketService {
         }
 
         ticketImageRepository.deleteAll(images);
+        commentRepository.deleteByTicketId(ticketId);
         ticketRepository.delete(ticket);
     }
 
@@ -243,6 +247,7 @@ public class TicketServiceImpl implements TicketService {
         }
 
         ticketImageRepository.deleteAll(images);
+        commentRepository.deleteByTicketId(ticketId);
         ticketRepository.delete(ticket);
     }
 
@@ -272,6 +277,7 @@ public class TicketServiceImpl implements TicketService {
         }
 
         ticketImageRepository.deleteAll(images);
+        commentRepository.deleteByTicketId(ticketId);
         ticketRepository.delete(ticket);
     }
 
