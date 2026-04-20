@@ -1,0 +1,188 @@
+package com.smartcampus.booking.service;
+
+import com.smartcampus.booking.dto.BookingCreateDTO;
+import com.smartcampus.booking.dto.BookingResponseDTO;
+import com.smartcampus.booking.model.Booking;
+import com.smartcampus.booking.model.BookingStatus;
+import com.smartcampus.booking.repository.BookingRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+public class BookingService {
+    
+    private final BookingRepository bookingRepository;
+    private final BookingConflictService conflictService;
+    
+    public BookingService(BookingRepository bookingRepository, 
+                          BookingConflictService conflictService) {
+        this.bookingRepository = bookingRepository;
+        this.conflictService = conflictService;
+    }
+    
+    // ========== USER OPERATIONS ==========
+    
+    /**
+     * Create a new booking request
+     */
+    public BookingResponseDTO createBooking(BookingCreateDTO dto, Long userId) {
+        // Validate time range
+        if (!conflictService.isValidTimeRange(dto.getStartTime(), dto.getEndTime())) {
+            throw new IllegalArgumentException("Start time must be before end time");
+        }
+        
+        // Validate duration (minimum 15 minutes)
+        if (!conflictService.isValidDuration(dto.getStartTime(), dto.getEndTime())) {
+            throw new IllegalArgumentException("Booking must be at least 15 minutes long");
+        }
+        
+        // Validate not in past
+        if (!conflictService.isNotPastTime(dto.getStartTime())) {
+            throw new IllegalArgumentException("Cannot book in the past");
+        }
+        
+        // Check for conflicts
+        if (conflictService.hasConflict(dto.getResourceId(), dto.getStartTime(), dto.getEndTime())) {
+            throw new IllegalStateException("Booking conflicts with existing booking");
+        }
+        
+        // Create booking
+        Booking booking = new Booking(
+            dto.getResourceId(),
+            userId,
+            dto.getStartTime(),
+            dto.getEndTime(),
+            dto.getPurpose(),
+            dto.getAttendees()
+        );
+        
+        Booking saved = bookingRepository.save(booking);
+        return BookingResponseDTO.fromEntity(saved);
+    }
+    
+    /**
+     * Get all bookings for the current user
+     */
+    public List<BookingResponseDTO> getUserBookings(Long userId) {
+        return bookingRepository.findByUserIdOrderByStartTimeDesc(userId)
+            .stream()
+            .map(BookingResponseDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get a single booking for the current user (with ownership check)
+     */
+    public BookingResponseDTO getUserBookingById(Long bookingId, Long userId) {
+        Booking booking = bookingRepository.findByIdAndUserId(bookingId, userId)
+            .orElseThrow(() -> new EntityNotFoundException("Booking not found or not owned by user"));
+        return BookingResponseDTO.fromEntity(booking);
+    }
+    
+    /**
+     * Cancel a booking (only if it's PENDING or APPROVED)
+     */
+    public BookingResponseDTO cancelBooking(Long bookingId, Long userId) {
+        Booking booking = bookingRepository.findByIdAndUserId(bookingId, userId)
+            .orElseThrow(() -> new EntityNotFoundException("Booking not found or not owned by user"));
+        
+        if (booking.getStatus() == BookingStatus.CANCELLED) {
+            throw new IllegalStateException("Booking is already cancelled");
+        }
+        
+        if (booking.getStatus() == BookingStatus.REJECTED) {
+            throw new IllegalStateException("Cannot cancel a rejected booking");
+        }
+        
+        booking.setStatus(BookingStatus.CANCELLED);
+        Booking updated = bookingRepository.save(booking);
+        return BookingResponseDTO.fromEntity(updated);
+    }
+    
+    // ========== ADMIN OPERATIONS ==========
+    
+    /**
+     * Get all bookings (admin)
+     */
+    public List<BookingResponseDTO> getAllBookings() {
+        return bookingRepository.findAllByOrderByCreatedAtDesc()
+            .stream()
+            .map(BookingResponseDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get bookings by status (admin)
+     */
+    public List<BookingResponseDTO> getBookingsByStatus(BookingStatus status) {
+        return bookingRepository.findByStatusOrderByCreatedAtDesc(status)
+            .stream()
+            .map(BookingResponseDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get pending bookings (admin convenience method)
+     */
+    public List<BookingResponseDTO> getPendingBookings() {
+        return getBookingsByStatus(BookingStatus.PENDING);
+    }
+    
+    /**
+     * Approve a booking
+     */
+    public BookingResponseDTO approveBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+            .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
+        
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            throw new IllegalStateException("Only pending bookings can be approved");
+        }
+        
+        // Double-check conflict before approving
+        if (conflictService.hasConflictExcludingId(
+                booking.getResourceId(), 
+                booking.getStartTime(), 
+                booking.getEndTime(), 
+                booking.getId())) {
+            throw new IllegalStateException("Cannot approve: Booking conflicts with another booking");
+        }
+        
+        booking.setStatus(BookingStatus.APPROVED);
+        booking.setRejectionReason(null);
+        Booking updated = bookingRepository.save(booking);
+        
+        return BookingResponseDTO.fromEntity(updated);
+    }
+    
+    /**
+     * Reject a booking with a reason
+     */
+    public BookingResponseDTO rejectBooking(Long bookingId, String reason) {
+        Booking booking = bookingRepository.findById(bookingId)
+            .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
+        
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            throw new IllegalStateException("Only pending bookings can be rejected");
+        }
+        
+        booking.setStatus(BookingStatus.REJECTED);
+        booking.setRejectionReason(reason);
+        Booking updated = bookingRepository.save(booking);
+        
+        return BookingResponseDTO.fromEntity(updated);
+    }
+    
+    /**
+     * Get a single booking by ID (admin)
+     */
+    public BookingResponseDTO getBookingById(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+            .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
+        return BookingResponseDTO.fromEntity(booking);
+    }
+}
