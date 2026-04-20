@@ -3,6 +3,7 @@ package com.smartcampus.ticket.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -62,4 +63,12 @@ public class TicketTechnicianController {
         Long technicianId = 3L; // temporary for testing
         return ResponseEntity.ok(ticketImageService.getImagesByTicketIdForTechnician(id, technicianId));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTicket(@PathVariable Long id) {
+        Long technicianId = 3L; // temporary
+        ticketService.deleteTicketForTechnician(id, technicianId);
+        return ResponseEntity.ok("Ticket deleted successfully");
+    }
+
 }

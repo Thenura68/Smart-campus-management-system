@@ -1,6 +1,7 @@
 package com.smartcampus.ticket.dto;
 
 public class CommentUpdateDTO {
+
     private String message;
 
     public CommentUpdateDTO() {
