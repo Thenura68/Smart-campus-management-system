@@ -27,8 +27,8 @@ public class NotificationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Notification>> getAllNotifications(
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← CHANGED: No userId in URL, get from JWT
+    public ResponseEntity<List<NotificationDTO>> getAllNotifications(
+            @AuthenticationPrincipal UserDetails userDetails) {
         
         Long userId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
         System.out.println("User ID: " + userId + " is viewing all notifications");
@@ -37,8 +37,8 @@ public class NotificationController {
     }
 
     @GetMapping("/unread")
-    public ResponseEntity<List<Notification>> getUnreadNotifications(
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← CHANGED: No userId in URL, get from JWT
+    public ResponseEntity<List<NotificationDTO>> getUnreadNotifications(
+            @AuthenticationPrincipal UserDetails userDetails) {
         
         Long userId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
         System.out.println("User ID: " + userId + " is viewing unread notifications");

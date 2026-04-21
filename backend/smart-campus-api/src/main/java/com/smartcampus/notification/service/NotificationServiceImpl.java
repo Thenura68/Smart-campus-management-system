@@ -39,50 +39,41 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<NotificationDTO> getAllNotificationsByUserId(Long userId) {
         List<Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
-
-        return notifications.stream().map(notification -> {
-            NotificationDTO dto = new NotificationDTO();
-
-            dto.setId(notification.getId());
-            dto.setUserId(notification.getUserId());
-            dto.setType(notification.getType());
-            dto.setMessage(notification.getMessage());
-            dto.setReferenceId(notification.getReferenceId());
-            dto.setIsRead(notification.getIsRead());
-            dto.setCreatedAt(notification.getCreatedAt());
-
-           
-            String url = "";
-
-            switch (notification.getType()) {
-                case TICKET_CREATED:
-                    url = "/admin/tickets/" + notification.getReferenceId();
-                    break;
-
-                case TICKET_ASSIGNED:
-                    url = "/technician/tickets/" + notification.getReferenceId();
-                    break;
-
-                case TICKET_RESOLVED:
-                    url = "/user/tickets/" + notification.getReferenceId();
-                    break;
-
-                default:
-                    url = "/";
-            }
-
-            dto.setTargetUrl(url);
-
-            return dto;
-        }).toList();
+        return notifications.stream().map(this::mapToDTO).toList();
     }
 
-
-
-
     @Override
-    public List<Notification> getUnreadNotificationsByUserId(Long userId) {
-        return notificationRepository.findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId);
+    public List<NotificationDTO> getUnreadNotificationsByUserId(Long userId) {
+        List<Notification> notifications = notificationRepository.findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId);
+        return notifications.stream().map(this::mapToDTO).toList();
+    }
+
+    private NotificationDTO mapToDTO(Notification notification) {
+        NotificationDTO dto = new NotificationDTO();
+        dto.setId(notification.getId());
+        dto.setUserId(notification.getUserId());
+        dto.setType(notification.getType());
+        dto.setMessage(notification.getMessage());
+        dto.setReferenceId(notification.getReferenceId());
+        dto.setIsRead(notification.getIsRead());
+        dto.setCreatedAt(notification.getCreatedAt());
+
+        String url = "";
+        switch (notification.getType()) {
+            case TICKET_CREATED:
+                url = "/admin/tickets/" + notification.getReferenceId();
+                break;
+            case TICKET_ASSIGNED:
+                url = "/technician/tickets/" + notification.getReferenceId();
+                break;
+            case TICKET_RESOLVED:
+                url = "/user/tickets/" + notification.getReferenceId();
+                break;
+            default:
+                url = "/";
+        }
+        dto.setTargetUrl(url);
+        return dto;
     }
 
     @Override
