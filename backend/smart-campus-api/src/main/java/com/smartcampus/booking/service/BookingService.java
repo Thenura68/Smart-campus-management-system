@@ -185,4 +185,14 @@ public class BookingService {
             .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
         return BookingResponseDTO.fromEntity(booking);
     }
+
+    /**
+     * Delete a booking (admin)
+     */
+    public void deleteBooking(Long bookingId) {
+        if (!bookingRepository.existsById(bookingId)) {
+            throw new EntityNotFoundException("Booking not found");
+        }
+        bookingRepository.deleteById(bookingId);
+    }
 }
