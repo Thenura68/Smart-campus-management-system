@@ -22,14 +22,21 @@ api.interceptors.request.use(
   }
 );
 
-// Add a response interceptor to handle unauthorized errors
+// Add a response interceptor to handle errors globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Optional: Clear token and redirect to login if unauthorized
-      localStorage.removeItem("token");
-      // window.location.href = "/login";
+    if (error.response) {
+      // 401: Unauthorized (Token expired or missing)
+      if (error.response.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+      
+      // 403: Forbidden (Role mismatch)
+      if (error.response.status === 403) {
+        window.location.href = "/unauthorized";
+      }
     }
     return Promise.reject(error);
   }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -35,14 +37,17 @@ public class TicketUserController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<TicketResponseDTO> createTicket(
             @ModelAttribute TicketCreateDTO dto,
-            @RequestPart(value = "images", required = false) MultipartFile[] images) {
-
-        Long currentUserId = 2L;
-
-        System.out.println("Images received in controller: " + (images == null ? 0 : images.length));
+            @RequestPart(value = "images", required = false) MultipartFile[] images,
+            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+        
+        Long currentUserId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT (NO MORE HARDCODED!)
+        
+        System.out.println("User ID: " + currentUserId + " is creating a ticket");
+        System.out.println("Images received: " + (images == null ? 0 : images.length));
+        
         if (images != null) {
             for (MultipartFile image : images) {
-                System.out.println("Controller file: " + image.getOriginalFilename());
+                System.out.println("File: " + image.getOriginalFilename());
             }
         }
 
@@ -56,29 +61,45 @@ public class TicketUserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TicketResponseDTO>> getMyTickets() {
-        Long currentUserId = 2L;
+    public ResponseEntity<List<TicketResponseDTO>> getMyTickets(
+            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+        
+        Long currentUserId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
+        System.out.println("User ID: " + currentUserId + " is viewing their tickets");
+        
         return ResponseEntity.ok(ticketService.getMyTickets(currentUserId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TicketResponseDTO> getTicketById(@PathVariable Long id) {
-        Long currentUserId = 2L;
+    public ResponseEntity<TicketResponseDTO> getTicketById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+        
+        Long currentUserId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
+        System.out.println("User ID: " + currentUserId + " is viewing ticket " + id);
+        
         return ResponseEntity.ok(ticketService.getTicketById(id, currentUserId));
     }
 
     @GetMapping("/{id}/images")
-    public ResponseEntity<List<TicketImageResponseDTO>> getTicketImages(@PathVariable Long id) {
-        Long currentUserId = 2L;
+    public ResponseEntity<List<TicketImageResponseDTO>> getTicketImages(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+        
+        Long currentUserId = Long.parseLong(userDetails.getUsername());
+        System.out.println("User ID: " + currentUserId + " is viewing images for ticket " + id);
+        
         return ResponseEntity.ok(ticketImageService.getImagesByTicketId(id, currentUserId));
     }
 
-
-//TEMPORARYYYYyyy
+    // TEMPORARY TEST ENDPOINT - Can be removed later
     @PostMapping(value = "/test-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> testUpload(
-            @RequestPart(value = "images", required = false) MultipartFile[] images) {
-
+            @RequestPart(value = "images", required = false) MultipartFile[] images,
+            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+        
+        Long userId = Long.parseLong(userDetails.getUsername());
+        System.out.println("User ID: " + userId + " testing upload");
         System.out.println("TEST images count = " + (images == null ? 0 : images.length));
 
         if (images != null) {
@@ -90,12 +111,15 @@ public class TicketUserController {
         return ResponseEntity.ok("received = " + (images == null ? 0 : images.length));
     }
 
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUserTicket(@PathVariable Long id) {
-        Long userId = 2L; // temporary (same as your current setup)
+    public ResponseEntity<String> deleteUserTicket(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+        
+        Long userId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
+        System.out.println("User ID: " + userId + " is deleting ticket " + id);
+        
         ticketService.deleteTicketForUser(id, userId);
         return ResponseEntity.ok("Ticket deleted successfully");
     }
-
 }
