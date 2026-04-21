@@ -1,0 +1,20 @@
+.admin-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  background: #111827;
+  color: white;
+  border-bottom: 1px solid #374151;
+}
+
+.admin-navbar a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: 500;
+}
+
+.admin-navbar a.active {
+  color: #34d399;
+}
