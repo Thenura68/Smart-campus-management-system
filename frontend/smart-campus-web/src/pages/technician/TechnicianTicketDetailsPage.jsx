@@ -18,9 +18,25 @@ function TechnicianTicketDetailsPage() {
   const [resolveLoading, setResolveLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [comments, setComments] = useState([]);
+
+
+
+  const fetchComments = async () => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/comments/ticket/${id}`);
+      const data = await res.json();
+      setComments(data);
+    } catch (error) {
+      console.error("Failed to fetch comments", error);
+    }
+  };
+
+
 
   useEffect(() => {
     fetchTicketDetails();
+    fetchComments();
   }, [id]);
 
   const fetchTicketDetails = async () => {
@@ -108,6 +124,8 @@ function TechnicianTicketDetailsPage() {
     );
   }
 
+
+
   return (
     <div style={styles.page}>
       <div style={styles.container}>
@@ -179,6 +197,36 @@ function TechnicianTicketDetailsPage() {
               </div>
             )}
           </div>
+          
+          <div style={styles.section}>
+              <h3 style={styles.sectionTitle}>Additional Comments</h3>
+
+              {comments.length === 0 ? (
+                <p style={styles.noImages}>No comments yet.</p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {comments.map((comment) => (
+                    <div
+                      key={comment.id}
+                      style={{
+                        padding: "12px",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "10px",
+                        background: "#f9fafb"
+                      }}
+                    >
+                      <p style={{ margin: 0 }}>{comment.message}</p>
+
+                      <span style={{ fontSize: "12px", color: "#6b7280" }}>
+                        {comment.createdAt
+                          ? new Date(comment.createdAt).toLocaleString()
+                          : "Just now"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
           <div style={styles.section}>
             <h3 style={styles.sectionTitle}>Resolve Ticket</h3>
@@ -238,7 +286,7 @@ const getStatusStyle = (status) => {
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "#1f1f1f",
+    background: "#dcdcdc",
     padding: "40px 20px",
   },
   container: {
@@ -358,7 +406,7 @@ const styles = {
     padding: "12px 14px",
     borderRadius: "12px",
     border: "1px solid #d1d5db",
-    background: "#a6a6a6",
+    background: "#e5e5e5",
     resize: "vertical",
     marginBottom: "14px",
     boxSizing: "border-box",
@@ -367,7 +415,7 @@ const styles = {
     padding: "12px 18px",
     border: "none",
     borderRadius: "12px",
-    background: "#111827",
+    background: "#0051ff",
     color: "#ffffff",
     fontWeight: "600",
     cursor: "pointer",
