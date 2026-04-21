@@ -21,24 +21,30 @@ import com.smartcampus.ticket.dto.TicketStatusUpdateDTO;
 import com.smartcampus.ticket.service.TicketImageService;
 import com.smartcampus.ticket.service.TicketService;
 
+import com.smartcampus.user.repository.UserRepository;
+
 @RestController
 @RequestMapping("/api/technician/tickets")
-@PreAuthorize("hasRole('TECHNICIAN')")  // ← ADD THIS - Only TECHNICIAN can access
+@PreAuthorize("hasRole('TECHNICIAN')")
 public class TicketTechnicianController {
 
     private final TicketService ticketService;
     private final TicketImageService ticketImageService;
+    private final UserRepository userRepository;
 
-    public TicketTechnicianController(TicketService ticketService, TicketImageService ticketImageService) {
+    public TicketTechnicianController(TicketService ticketService, 
+                                     TicketImageService ticketImageService,
+                                     UserRepository userRepository) {
         this.ticketService = ticketService;
         this.ticketImageService = ticketImageService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
     public ResponseEntity<List<TicketResponseDTO>> getAssignedTickets(
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {
         
-        Long technicianId = Long.parseLong(userDetails.getUsername());  // ← Get technician ID from JWT (NO MORE HARDCODED!)
+        Long technicianId = extractUserId(userDetails);
         System.out.println("Technician ID: " + technicianId + " is viewing assigned tickets");
         
         return ResponseEntity.ok(ticketService.getAssignedTickets(technicianId));
@@ -48,9 +54,9 @@ public class TicketTechnicianController {
     public ResponseEntity<String> updateTicketStatus(
             @PathVariable Long id,
             @RequestBody TicketStatusUpdateDTO dto,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {
         
-        Long technicianId = Long.parseLong(userDetails.getUsername());  // ← Get technician ID from JWT
+        Long technicianId = extractUserId(userDetails);
         System.out.println("Technician ID: " + technicianId + " is updating ticket " + id + " status to " + dto.getStatus());
         
         ticketService.updateTicketStatus(id, dto.getStatus(), technicianId);
@@ -61,9 +67,9 @@ public class TicketTechnicianController {
     public ResponseEntity<String> updateResolution(
             @PathVariable Long id,
             @RequestBody TicketResolutionDTO dto,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {
         
-        Long technicianId = Long.parseLong(userDetails.getUsername());
+        Long technicianId = extractUserId(userDetails);
         System.out.println("Technician ID: " + technicianId + " is adding resolution to ticket " + id);
         
         ticketService.updateResolution(id, dto.getResolutionNotes(), technicianId);
@@ -73,9 +79,9 @@ public class TicketTechnicianController {
     @GetMapping("/{id}/images")
     public ResponseEntity<List<TicketImageResponseDTO>> getTicketImages(
             @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {
         
-        Long technicianId = Long.parseLong(userDetails.getUsername());
+        Long technicianId = extractUserId(userDetails);
         System.out.println("Technician ID: " + technicianId + " is viewing images for ticket " + id);
         
         return ResponseEntity.ok(ticketImageService.getImagesByTicketIdForTechnician(id, technicianId));
@@ -84,12 +90,26 @@ public class TicketTechnicianController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTicket(
             @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {
         
-        Long technicianId = Long.parseLong(userDetails.getUsername());
+        Long technicianId = extractUserId(userDetails);
         System.out.println("Technician ID: " + technicianId + " is deleting ticket " + id);
         
         ticketService.deleteTicketForTechnician(id, technicianId);
         return ResponseEntity.ok("Ticket deleted successfully");
+    }
+
+    private Long extractUserId(UserDetails userDetails) {
+        if (userDetails == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+        String username = userDetails.getUsername();
+        try {
+            return Long.parseLong(username);
+        } catch (NumberFormatException e) {
+            return userRepository.findByEmail(username)
+                    .orElseThrow(() -> new RuntimeException("Technician not found: " + username))
+                    .getId();
+        }
     }
 }

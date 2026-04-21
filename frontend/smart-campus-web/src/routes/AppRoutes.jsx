@@ -61,7 +61,7 @@ export default function AppRoutes() {
         </ProtectedRoute>
       } />
       <Route path="/user/tickets/create" element={
-        <ProtectedRoute allowedRoles={['TECHNICIAN', 'ADMIN']}>
+        <ProtectedRoute allowedRoles={['USER', 'TECHNICIAN', 'ADMIN']}>
           <CreateTicketPage />
         </ProtectedRoute>
       } />
