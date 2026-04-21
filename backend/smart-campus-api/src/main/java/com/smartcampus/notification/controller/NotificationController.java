@@ -14,7 +14,7 @@ import com.smartcampus.notification.dto.NotificationDTO;
 import com.smartcampus.notification.model.Notification;
 import com.smartcampus.notification.service.NotificationService;
 
-@RestController
+@RestController 
 @RequestMapping("/api/notifications")
 public class NotificationController {
 
