@@ -64,7 +64,7 @@ return (
     <div className="soft-page">
 
       {/* HERO */}
-      <section className="hero-section">
+      <section className="user-hero">
         <div className="hero-content">
 
           <div className="hero-text">

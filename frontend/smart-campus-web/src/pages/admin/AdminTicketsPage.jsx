@@ -63,7 +63,7 @@ function AdminTicketsPage() {
       <div className="soft-page">
 
         {/* HERO */}
-        <section className="hero-section">
+        <section className="admin-hero">
           <div className="hero-content">
 
             <div className="hero-text">

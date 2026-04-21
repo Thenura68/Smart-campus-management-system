@@ -67,7 +67,7 @@ function AssignedTicketsPage() {
       <div className="soft-page">
 
         {/* HERO */}
-        <section className="hero-section">
+        <section className="tech-hero">
           <div className="hero-content">
 
             <div className="hero-text">
