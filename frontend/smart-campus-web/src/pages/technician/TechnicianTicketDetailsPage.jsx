@@ -286,7 +286,7 @@ const getStatusStyle = (status) => {
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "#dcdcdc",
+    background: "#282828",
     padding: "40px 20px",
   },
   container: {
