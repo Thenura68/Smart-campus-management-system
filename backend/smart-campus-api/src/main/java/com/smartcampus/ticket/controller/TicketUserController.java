@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.smartcampus.ticket.dto.TicketCreateDTO;
+import com.smartcampus.ticket.dto.TicketImageResponseDTO;
+import com.smartcampus.ticket.dto.TicketResponseDTO;
+import com.smartcampus.ticket.service.TicketImageService;
+import com.smartcampus.ticket.service.TicketService;
 import com.smartcampus.user.repository.UserRepository;
 
 @RestController

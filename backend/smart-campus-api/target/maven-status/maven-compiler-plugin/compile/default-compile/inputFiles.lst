@@ -8,8 +8,14 @@ D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\booking\repository\BookingRepository.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\booking\service\BookingConflictService.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\booking\service\BookingService.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\chatbot\controller\ChatbotController.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\chatbot\dto\ChatRequest.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\chatbot\dto\ChatResponse.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\chatbot\service\ChatbotService.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\chatbot\service\OllamaService.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\common\ApiResponse.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\common\ErrorResponse.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\config\RestTemplateConfig.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\config\WebConfig.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\exception\BadRequestException.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\exception\ConflictException.java
