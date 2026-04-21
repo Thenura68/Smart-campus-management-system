@@ -1,27 +1,30 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../services/authService";
-import "./LoginPage.css";
+import { register } from "../../services/authService";
+import "./RegisterPage.css";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    fullName: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors = { email: "", password: "" };
+    const newErrors = {};
+
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = "Full name is required";
+      isValid = false;
+    }
 
     if (!formData.email) {
       newErrors.email = "Email is required";
@@ -33,6 +36,14 @@ const LoginPage = () => {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
+      isValid = false;
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
       isValid = false;
     }
 
@@ -62,22 +73,23 @@ const LoginPage = () => {
     setSuccessMessage("");
 
     try {
-      const credentials = {
+      const userData = {
+        name: formData.fullName,
         email: formData.email,
         password: formData.password
       };
       
-      await login(credentials);
-      setSuccessMessage("Login Success");
+      await register(userData);
+      setSuccessMessage("Successfully registered");
       
       // Delay redirect to allow user to see the success message
       setTimeout(() => {
-        navigate("/user/bookings");
+        navigate("/login");
       }, 1500);
       
     } catch (error) {
-      console.error("Login error:", error);
-      setServerError(error.response?.data?.message || "Invalid email or password. Please try again.");
+      console.error("Registration error:", error);
+      setServerError(error.response?.data?.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -88,17 +100,32 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
-          <h1>Welcome Back</h1>
-          <p>Please enter your details to sign in</p>
+    <div className="register-container">
+      <div className="register-card">
+        <div className="register-header">
+          <h1>Create Account</h1>
+          <p>Join the Smart Campus community today</p>
         </div>
 
         {successMessage && <div className="success-message">{successMessage}</div>}
         {serverError && <div className="server-error-message">{serverError}</div>}
 
-        <form className="login-form" onSubmit={handleSubmit} noValidate>
+        <form className="register-form" onSubmit={handleSubmit} noValidate>
+          <div className="form-group">
+            <label htmlFor="fullName">Full Name</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              placeholder="Enter your full name"
+              value={formData.fullName}
+              onChange={handleChange}
+              className={errors.fullName ? "error" : ""}
+              disabled={isLoading}
+            />
+            {errors.fullName && <span className="error-message">{errors.fullName}</span>}
+          </div>
+
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <input
@@ -120,7 +147,7 @@ const LoginPage = () => {
               type="password"
               id="password"
               name="password"
-              placeholder="Enter password"
+              placeholder="Create password"
               value={formData.password}
               onChange={handleChange}
               className={errors.password ? "error" : ""}
@@ -129,8 +156,25 @@ const LoginPage = () => {
             {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
 
-          <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? "Signing In..." : "Sign In"}
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirm password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={errors.confirmPassword ? "error" : ""}
+              disabled={isLoading}
+            />
+            {errors.confirmPassword && (
+              <span className="error-message">{errors.confirmPassword}</span>
+            )}
+          </div>
+
+          <button type="submit" className="register-button" disabled={isLoading}>
+            {isLoading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
 
@@ -157,15 +201,15 @@ const LoginPage = () => {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          Sign in with Google
+          Sign up with Google
         </button>
 
-        <p className="register-prompt">
-          Not a member? <Link to="/register">Register now</Link>
+        <p className="login-prompt">
+          Already a member? <Link to="/login">Login now</Link>
         </p>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
