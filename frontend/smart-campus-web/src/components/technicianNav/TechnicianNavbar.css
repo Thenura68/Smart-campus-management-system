@@ -1,4 +1,4 @@
-.user-navbar {
+.technician-navbar {
   position: fixed;
   top: 16px;
   left: 16px;
@@ -15,20 +15,20 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
-.user-navbar-brand a {
+.technician-navbar-brand a {
   color: #ffffff;
   text-decoration: none;
   font-size: 1.8rem;
   font-weight: 700;
 }
 
-.user-navbar-links {
+.technician-navbar-links {
   display: flex;
   align-items: center;
   gap: 24px;
 }
 
-.user-navbar-links a {
+.technician-navbar-links a {
   color: #dbeafe;
   text-decoration: none;
   font-size: 1rem;
@@ -36,22 +36,22 @@
   transition: color 0.2s ease;
 }
 
-.user-navbar-links a:hover {
+.technician-navbar-links a:hover {
   color: #60a5fa;
 }
 
-.user-navbar-links a.active {
+.technician-navbar-links a.active {
   color: #facc15;
 }
 
 @media (max-width: 768px) {
-  .user-navbar {
+  .technician-navbar {
     flex-direction: column;
     gap: 12px;
     padding: 16px 20px;
   }
 
-  .user-navbar-links {
+  .technician-navbar-links {
     flex-wrap: wrap;
     justify-content: center;
     gap: 14px;

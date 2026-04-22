@@ -1,39 +1,38 @@
 import React, { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const OAuthSuccess = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const token = params.get("token");
+    const token = searchParams.get("token");
+    const role = searchParams.get("role");
 
-    if (token) {
-      localStorage.setItem("token", token);
-      console.log("Token stored successfully");
-      navigate("/user/bookings");
-    } else {
-      console.error("No token found in redirection");
+    if (!token) {
       navigate("/login");
+      return;
     }
-  }, [location, navigate]);
 
-  return (
-    <div style={{ 
-      height: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      background: '#01071a',
-      color: 'white'
-    }}>
-      <div style={{ textAlign: 'center' }}>
-        <h2>Authenticating...</h2>
-        <p>Please wait while we complete your login.</p>
-      </div>
-    </div>
-  );
+    localStorage.setItem("token", token);
+
+    if (role) {
+      localStorage.setItem("role", role);
+    }
+
+    console.log("Token stored successfully");
+    console.log("Role stored:", role);
+
+    if (role === "ADMIN") {
+      navigate("/admin/dashboard");
+    } else if (role === "TECHNICIAN") {
+      navigate("/technician/dashboard");
+    } else {
+      navigate("/user/home");
+    }
+  }, [navigate, searchParams]);
+
+  return <div style={{ padding: "24px" }}>Signing you in...</div>;
 };
 
 export default OAuthSuccess;

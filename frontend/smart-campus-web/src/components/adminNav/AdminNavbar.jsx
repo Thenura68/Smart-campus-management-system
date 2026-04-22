@@ -16,16 +16,16 @@ export default function AdminNavbar() {
           Dashboard
         </Link>
         <Link className={pathname.includes("/admin/resources") ? "active" : ""} to="/admin/resources">
-          Manage Resources
+          Resources
         </Link>
         <Link className={pathname.includes("/admin/bookings") ? "active" : ""} to="/admin/bookings">
-          Manage Bookings
+          Bookings
         </Link>
         <Link className={pathname.includes("/admin/tickets") ? "active" : ""} to="/admin/tickets">
-          Manage Tickets
+          Tickets
         </Link>
         <Link className={pathname.includes("/admin/users") ? "active" : ""} to="/admin/users">
-          Manage Users
+          Users
         </Link>
       </div>
     </nav>

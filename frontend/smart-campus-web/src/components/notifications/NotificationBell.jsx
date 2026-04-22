@@ -3,23 +3,15 @@ import useNotifications from "../../hooks/useNotifications";
 import { useNavigate } from "react-router-dom";
 
 function NotificationBell() {
-
-
-  const userId = 3; // replace with JWT
-  const { notifications, unreadCount, deleteNotification } = useNotifications(userId);
-
   const navigate = useNavigate();
-
   const [open, setOpen] = useState(false);
 
-
-  
+  const userId = localStorage.getItem("userId");
+  const { notifications, unreadCount, deleteNotification } = useNotifications(userId);
 
   function timeAgo(dateString) {
     const now = new Date();
-
-    
-    const created = new Date(dateString.replace("T", " "));
+    const created = new Date(dateString);
 
     const seconds = Math.floor((now - created) / 1000);
 
@@ -35,55 +27,62 @@ function NotificationBell() {
     return `${days} day${days > 1 ? "s" : ""} ago`;
   }
 
-
-
   return (
     <div style={{ position: "relative" }}>
-      
-      {/* Bell */}
       <div onClick={() => setOpen(!open)} style={{ cursor: "pointer" }}>
-        🔔 {unreadCount > 0 && <span style={{
+        🔔
+        {unreadCount > 0 && (
+          <span
+            style={{
               background: "red",
               color: "white",
               borderRadius: "50%",
               padding: "2px 6px",
               fontSize: "12px",
-              marginLeft: "5px"
-            }}>
-              {unreadCount}
-            </span>}
+              marginLeft: "5px",
+            }}
+          >
+            {unreadCount}
+          </span>
+        )}
       </div>
 
-      {/*Dropdown */}
       {open && (
-        <div style={{
-          position: "fixed",
-          right: "20px",
-          top: "50px",
-          width: "300px",
-          background: "rgba(10, 20, 40, 0.95)",
-          backdropFilter: "blur(16px)",
-          border: "1px solid rgba(0, 140, 255, 0.3)",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
-          color: "#e8f4ff",
-          zIndex: 9999,
-          maxHeight: "400px",
-          overflowY: "auto",
-          borderRadius: "12px"
-        }}>
-          
-          {notifications.length === 0 ? (
+        <div
+          style={{
+            position: "fixed",
+            right: "20px",
+            top: "50px",
+            width: "300px",
+            background: "rgba(10, 20, 40, 0.95)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(0, 140, 255, 0.3)",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+            color: "#e8f4ff",
+            zIndex: 9999,
+            maxHeight: "400px",
+            overflowY: "auto",
+            borderRadius: "12px",
+          }}
+        >
+          {!userId ? (
+            <p style={{ padding: "12px", textAlign: "center", opacity: 0.6 }}>
+              Login to see notifications
+            </p>
+          ) : notifications.length === 0 ? (
             <p style={{ padding: "12px", textAlign: "center", opacity: 0.6 }}>
               No notifications
             </p>
           ) : (
-            notifications.slice(0, 5).map(n => (
+            notifications.slice(0, 5).map((n) => (
               <div
                 key={n.id}
                 onClick={() => {
-                  navigate(n.targetUrl);     
-                  deleteNotification(n.id); 
-                  setOpen(false);           // close dropdown
+                  if (n.targetUrl) {
+                    navigate(n.targetUrl);
+                  }
+                  deleteNotification(n.id);
+                  setOpen(false);
                 }}
                 style={{
                   padding: "12px 14px",
@@ -92,28 +91,28 @@ function NotificationBell() {
                   gap: "10px",
                   alignItems: "flex-start",
                   background: n.isRead ? "transparent" : "rgba(0, 140, 255, 0.08)",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               >
-                {/* Icon */}
-                <div style={{ fontSize: "18px" }}>
-                  {getIcon(n.type)}
-                </div>
+                <div style={{ fontSize: "18px" }}>{getIcon(n.type)}</div>
 
-                {/* Content */}
                 <div style={{ flex: 1 }}>
-                  <div style={{
-                    fontSize: "13px",
-                    fontWeight: n.isRead ? "400" : "600"
-                  }}>
+                  <div
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: n.isRead ? "400" : "600",
+                    }}
+                  >
                     {n.message}
                   </div>
 
-                  <div style={{
-                    fontSize: "11px",
-                    opacity: 0.6,
-                    marginTop: "4px"
-                  }}>
+                  <div
+                    style={{
+                      fontSize: "11px",
+                      opacity: 0.6,
+                      marginTop: "4px",
+                    }}
+                  >
                     {timeAgo(n.createdAt)}
                   </div>
                 </div>
