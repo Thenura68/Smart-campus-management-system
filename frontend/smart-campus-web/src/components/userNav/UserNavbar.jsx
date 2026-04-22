@@ -13,7 +13,7 @@ export default function UserNavbar() {
 
       <div className="user-navbar-links">
         <Link className={pathname.includes("/user/resources") ? "active" : ""} to="/user/resources">
-          Resource Catalogue
+          Resources
         </Link>
         <Link className={pathname.includes("/user/bookings") ? "active" : ""} to="/user/bookings">
           My Bookings
