@@ -1,34 +1,41 @@
-/* ── Navbar.css ── Futuristic Blue Theme ── */
-
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-body, html {
+html,
+body,
+#root {
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #020817;
 }
 
 .navbar {
-  width: min(1100px, calc(100% - 32px));
-  margin: 0 auto 0; 
-  padding: 13px 22px;
+  width: 100%;
+  margin: 0;
+  padding: 18px 36px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(4, 16, 42, 0.82);
+  background: rgba(4, 16, 42, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-radius: 999px;
-  border: 1px solid rgba(0, 110, 255, 0.28);
-  box-shadow: 0 0 28px rgba(0, 100, 255, 0.1);
-  position: sticky;
-  top: 16px;
-  z-index: 50;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(0, 110, 255, 0.22);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   overflow: visible;
 }
 
-/* top shimmer line */
 .navbar::before {
   content: "";
   position: absolute;
@@ -45,17 +52,22 @@ body, html {
   pointer-events: none;
 }
 
-/* soft outer glow ring */
 .navbar::after {
   content: "";
   position: absolute;
-  inset: -1px;
-  border-radius: 999px;
-  box-shadow: 0 0 22px rgba(0, 100, 255, 0.12);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 140, 255, 0.25),
+    transparent
+  );
   pointer-events: none;
 }
 
-/* ── Brand ── */
 .navbar-brand {
   display: flex;
   align-items: center;
@@ -68,7 +80,6 @@ body, html {
   flex-shrink: 0;
 }
 
-/* icon box */
 .navbar-brand-icon {
   width: 30px;
   height: 30px;
@@ -90,7 +101,6 @@ body, html {
   height: 16px;
 }
 
-/* "Campus" gradient word */
 .brand-word-campus {
   background: linear-gradient(90deg, #7dc8ff, #00d4ff);
   -webkit-background-clip: text;
@@ -98,7 +108,6 @@ body, html {
   background-clip: text;
 }
 
-/* animated live dot */
 .nav-live-dot {
   width: 7px;
   height: 7px;
@@ -110,7 +119,8 @@ body, html {
 }
 
 @keyframes nav-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     box-shadow: 0 0 6px #00d4b0;
   }
@@ -120,28 +130,26 @@ body, html {
   }
 }
 
-/* ── Links ── */
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .navbar-links a {
-  color: rgba(160, 210, 255, 0.72);
+  color: rgba(160, 210, 255, 0.78);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.92rem;
   letter-spacing: 0.02em;
   text-decoration: none;
-  padding: 8px 18px;
+  padding: 9px 18px;
   border-radius: 999px;
   border: 1px solid transparent;
   position: relative;
   transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
-/* top micro-line on active link */
 .navbar-links a.active::before {
   content: "";
   position: absolute;
@@ -169,22 +177,22 @@ body, html {
   border-color: rgba(0, 140, 255, 0.35);
 }
 
-/* ── Responsive ── */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .navbar {
-    border-radius: 20px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 14px;
     padding: 16px 20px;
   }
 
   .navbar-links {
-    gap: 8px;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .navbar-links a {
-    font-size: 0.82rem;
-    padding: 7px 14px;
+    font-size: 0.85rem;
+    padding: 8px 14px;
   }
 }

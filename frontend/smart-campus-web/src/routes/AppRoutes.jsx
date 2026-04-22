@@ -7,6 +7,9 @@ import UserLayout from "../layouts/UserLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import TechnicianLayout from "../layouts/TechnicianLayout";
 
+// Home page
+import HomePage from "../pages/public/HomePage";
+
 // Auth pages
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
@@ -42,7 +45,7 @@ export default function AppRoutes() {
     <Routes>
       {/* Public */}
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/oauth-success" element={<OAuthSuccess />} />
