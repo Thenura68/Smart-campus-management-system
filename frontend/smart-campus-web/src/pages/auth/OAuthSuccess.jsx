@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getUserRole } from "../../utils/jwtUtils";
 
 const OAuthSuccess = () => {
@@ -16,11 +16,11 @@ const OAuthSuccess = () => {
       
       const role = getUserRole();
       if (role === "ADMIN") {
-        navigate("/admin/tickets");
+        navigate("/admin/dashboard");
       } else if (role === "TECHNICIAN") {
         navigate("/technician/tickets");
       } else {
-        navigate("/user/bookings");
+        navigate("/user/home");
       }
     } else {
       navigate("/user/home");

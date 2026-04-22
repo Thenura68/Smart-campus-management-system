@@ -98,13 +98,12 @@ const LoginPage = () => {
       setSuccessMessage("Login Success");
 
       setTimeout(() => {
-        const role = getUserRole();
         if (role === "ADMIN") {
-          navigate("/admin/tickets");
+          navigate("/admin/dashboard");
         } else if (role === "TECHNICIAN") {
           navigate("/technician/tickets");
         } else {
-          navigate("/user/bookings");
+          navigate("/user/home");
         }
       }, 1500);
       
