@@ -24,7 +24,12 @@ function TechnicianTicketDetailsPage() {
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/api/comments/ticket/${id}`);
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:8080/api/comments/ticket/${id}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setComments(data);
     } catch (error) {

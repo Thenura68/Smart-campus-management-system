@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../services/authService";
+import { getUserRole } from "../../utils/jwtUtils";
 import "./LoginPage.css";
 
 const LoginPage = () => {
@@ -46,9 +47,11 @@ const LoginPage = () => {
       ...prev,
       [name]: value,
     }));
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
+
     setServerError("");
     setSuccessMessage("");
   };
@@ -64,20 +67,53 @@ const LoginPage = () => {
     try {
       const credentials = {
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       };
-      
-      await login(credentials);
+
+      const response = await login(credentials);
+
+      const token =
+        response?.data?.token ||
+        response?.data?.accessToken ||
+        response?.token ||
+        response?.accessToken;
+
+      const role =
+        response?.data?.role ||
+        response?.role ||
+        response?.data?.user?.role ||
+        response?.user?.role;
+
+      if (!token) {
+        throw new Error("Login succeeded but token was not returned.");
+      }
+
+      if (!role) {
+        throw new Error("Login succeeded but role was not returned.");
+      }
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+
       setSuccessMessage("Login Success");
-      
-      // Delay redirect to allow user to see the success message
+
       setTimeout(() => {
-        navigate("/user/bookings");
+        if (role === "ADMIN") {
+          navigate("/admin/dashboard");
+        } else if (role === "TECHNICIAN") {
+          navigate("/technician/tickets");
+        } else {
+          navigate("/user/home");
+        }
       }, 1500);
       
     } catch (error) {
       console.error("Login error:", error);
-      setServerError(error.response?.data?.message || "Invalid email or password. Please try again.");
+      setServerError(
+        error.response?.data?.message ||
+          error.message ||
+          "Invalid email or password. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }

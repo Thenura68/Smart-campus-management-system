@@ -1,39 +1,33 @@
 import React, { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { getUserRole } from "../../utils/jwtUtils";
 
 const OAuthSuccess = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const token = params.get("token");
+    const token = searchParams.get("token");
+    const role = searchParams.get("role");
 
     if (token) {
       localStorage.setItem("token", token);
       console.log("Token stored successfully");
-      navigate("/user/bookings");
+      
+      const role = getUserRole();
+      if (role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else if (role === "TECHNICIAN") {
+        navigate("/technician/tickets");
+      } else {
+        navigate("/user/home");
+      }
     } else {
-      console.error("No token found in redirection");
-      navigate("/login");
+      navigate("/user/home");
     }
-  }, [location, navigate]);
+  }, [navigate, searchParams]);
 
-  return (
-    <div style={{ 
-      height: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      background: '#01071a',
-      color: 'white'
-    }}>
-      <div style={{ textAlign: 'center' }}>
-        <h2>Authenticating...</h2>
-        <p>Please wait while we complete your login.</p>
-      </div>
-    </div>
-  );
+  return <div style={{ padding: "24px" }}>Signing you in...</div>;
 };
 
 export default OAuthSuccess;

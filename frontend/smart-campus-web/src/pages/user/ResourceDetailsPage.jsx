@@ -266,13 +266,7 @@ export default function ResourceDetailsPage() {
               >
                 ← Back to Catalogue
               </button>
-              <button
-                className="rd-btn-secondary"
-                style={{ color: cfg.accent, borderColor: cfg.accentBorder, background: cfg.accentLight }}
-                onClick={() => navigate("/manage-resources")}
-              >
-                Manage Resources
-              </button>
+            
             </div>
 
           </div>

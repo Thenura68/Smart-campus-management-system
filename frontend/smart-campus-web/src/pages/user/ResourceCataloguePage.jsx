@@ -56,7 +56,7 @@ export default function ResourceCataloguePage() {
   }, [filters, resources]);
 
   const handleView = (id) => {
-    navigate(`/resources/${id}`);
+    navigate(`/user/resources/${id}`);
   };
 
   const handleFilterChange = (e) => {
