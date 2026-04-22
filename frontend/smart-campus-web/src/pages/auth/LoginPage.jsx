@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../services/authService";
+import { getUserRole } from "../../utils/jwtUtils";
 import "./LoginPage.css";
 
 const LoginPage = () => {
@@ -100,11 +101,12 @@ const LoginPage = () => {
         if (role === "ADMIN") {
           navigate("/admin/dashboard");
         } else if (role === "TECHNICIAN") {
-          navigate("/technician/dashboard");
+          navigate("/technician/tickets");
         } else {
           navigate("/user/home");
         }
-      }, 1000);
+      }, 1500);
+      
     } catch (error) {
       console.error("Login error:", error);
       setServerError(

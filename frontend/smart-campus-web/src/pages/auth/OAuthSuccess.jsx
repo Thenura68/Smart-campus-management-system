@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { getUserRole } from "../../utils/jwtUtils";
 
 const OAuthSuccess = () => {
   const navigate = useNavigate();
@@ -9,24 +10,18 @@ const OAuthSuccess = () => {
     const token = searchParams.get("token");
     const role = searchParams.get("role");
 
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    localStorage.setItem("token", token);
-
-    if (role) {
-      localStorage.setItem("role", role);
-    }
-
-    console.log("Token stored successfully");
-    console.log("Role stored:", role);
-
-    if (role === "ADMIN") {
-      navigate("/admin/dashboard");
-    } else if (role === "TECHNICIAN") {
-      navigate("/technician/dashboard");
+    if (token) {
+      localStorage.setItem("token", token);
+      console.log("Token stored successfully");
+      
+      const role = getUserRole();
+      if (role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else if (role === "TECHNICIAN") {
+        navigate("/technician/tickets");
+      } else {
+        navigate("/user/home");
+      }
     } else {
       navigate("/user/home");
     }
