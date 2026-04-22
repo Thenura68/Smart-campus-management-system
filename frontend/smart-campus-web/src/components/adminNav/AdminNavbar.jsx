@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./AdminNavbar.css";
+import NotificationBell from "../notifications/NotificationBell"; 
 
 export default function AdminNavbar() {
   const { pathname } = useLocation();
@@ -27,7 +28,9 @@ export default function AdminNavbar() {
         <Link className={pathname.includes("/admin/users") ? "active" : ""} to="/admin/users">
           Users
         </Link>
+        <NotificationBell />
       </div>
+      
     </nav>
   );
 }

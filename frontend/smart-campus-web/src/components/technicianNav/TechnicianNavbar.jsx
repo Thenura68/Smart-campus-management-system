@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./TechnicianNavbar.css";
+import NotificationBell from "../notifications/NotificationBell"; 
 
 export default function TechnicianNavbar() {
   const { pathname } = useLocation();
@@ -38,7 +39,11 @@ export default function TechnicianNavbar() {
         >
           Assigned Tickets
         </Link>
+        <NotificationBell />
       </div>
+      
+        
+      
     </nav>
   );
 }

@@ -2,12 +2,29 @@ import { useState } from "react";
 import useNotifications from "../../hooks/useNotifications";
 import { useNavigate } from "react-router-dom";
 
+
 function NotificationBell() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
+
+  let userId = null;
+
+  if (token) {
+    try {
+      const payload = token.split(".")[1];       // get payload
+      const decoded = JSON.parse(atob(payload)); // decode base64 → object
+      userId = Number(decoded.sub);              // get userId
+    } catch (error) {
+      console.error("Invalid token", error);
+    }
+  }
   const { notifications, unreadCount, deleteNotification } = useNotifications(userId);
+
+
+
+  
 
   function timeAgo(dateString) {
     const now = new Date();
