@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../services/authService";
+import { getUserRole } from "../../utils/jwtUtils";
 import "./LoginPage.css";
 
 const LoginPage = () => {
@@ -72,7 +73,14 @@ const LoginPage = () => {
       
       // Delay redirect to allow user to see the success message
       setTimeout(() => {
-        navigate("/user/bookings");
+        const role = getUserRole();
+        if (role === "ADMIN") {
+          navigate("/admin/tickets");
+        } else if (role === "TECHNICIAN") {
+          navigate("/technician/tickets");
+        } else {
+          navigate("/user/bookings");
+        }
       }, 1500);
       
     } catch (error) {

@@ -34,17 +34,17 @@ export default function AppRoutes() {
 
       {/* User routes */}
       <Route path="/user/bookings" element={
-        <ProtectedRoute allowedRoles={['USER', 'ADMIN', 'TECHNICIAN']}>
+        <ProtectedRoute allowedRoles={['USER', 'ADMIN']}>
           <MyBookingsPage />
         </ProtectedRoute>
       } />
       <Route path="/user/tickets" element={
-        <ProtectedRoute allowedRoles={['USER', 'ADMIN', 'TECHNICIAN']}>
+        <ProtectedRoute allowedRoles={['USER', 'ADMIN']}>
           <MyTicketsPage />
         </ProtectedRoute>
       } />
       <Route path="/user/tickets/:id" element={
-        <ProtectedRoute allowedRoles={['USER', 'ADMIN', 'TECHNICIAN']}>
+        <ProtectedRoute allowedRoles={['USER', 'ADMIN']}>
           <TicketDetailsPage />
         </ProtectedRoute>
       } />

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getUserRole } from "../../utils/jwtUtils";
 
 const OAuthSuccess = () => {
   const navigate = useNavigate();
@@ -12,7 +13,15 @@ const OAuthSuccess = () => {
     if (token) {
       localStorage.setItem("token", token);
       console.log("Token stored successfully");
-      navigate("/user/bookings");
+      
+      const role = getUserRole();
+      if (role === "ADMIN") {
+        navigate("/admin/tickets");
+      } else if (role === "TECHNICIAN") {
+        navigate("/technician/tickets");
+      } else {
+        navigate("/user/bookings");
+      }
     } else {
       console.error("No token found in redirection");
       navigate("/login");

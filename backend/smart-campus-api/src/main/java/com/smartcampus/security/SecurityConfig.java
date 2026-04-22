@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/api/test/**").permitAll()
                 // Protected endpoints
-                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN", "TECHNICIAN")
+                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/technician/**").hasRole("TECHNICIAN")
                 .anyRequest().authenticated()
