@@ -6,7 +6,7 @@ import PublicLayout from "../layouts/PublicLayout";
 import UserLayout from "../layouts/UserLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import TechnicianLayout from "../layouts/TechnicianLayout";
-
+import TicketForm from "../components/tickets/TicketForm";
 // Home page
 import HomePage from "../pages/public/HomePage";
 
@@ -66,6 +66,7 @@ export default function AppRoutes() {
         <Route path="resources/:id" element={<ResourceDetailsPage />} />
         <Route path="bookings" element={<MyBookingsPage />} />
         <Route path="tickets" element={<MyTicketsPage />} />
+        <Route path="tickets/create" element={<TicketForm />} />
         <Route path="tickets/:id" element={<TicketDetailsPage />} />
       </Route>
 
