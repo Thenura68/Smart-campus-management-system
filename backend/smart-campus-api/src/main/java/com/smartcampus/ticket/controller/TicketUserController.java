@@ -89,7 +89,7 @@ public class TicketUserController {
     @GetMapping("/{id}/images")
     public ResponseEntity<List<TicketImageResponseDTO>> getTicketImages(
             @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {  //  PARAMETER
         
         Long currentUserId = Long.parseLong(userDetails.getUsername());
         System.out.println("User ID: " + currentUserId + " is viewing images for ticket " + id);
