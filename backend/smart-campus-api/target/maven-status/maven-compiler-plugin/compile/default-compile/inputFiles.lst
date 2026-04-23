@@ -68,6 +68,10 @@ D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\ticket\service\TicketImageServiceImpl.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\ticket\service\TicketService.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\ticket\service\TicketServiceImpl.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\user\controller\AuthController.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\user\dto\AuthResponse.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\user\dto\LoginRequest.java
+D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\user\dto\RegisterRequest.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\user\dto\UserDTO.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\user\model\User.java
 D:\Projects\PAF\Smart-campus-management-system\backend\smart-campus-api\src\main\java\com\smartcampus\user\repository\UserRepository.java

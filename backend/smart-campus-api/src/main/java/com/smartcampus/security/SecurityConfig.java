@@ -14,6 +14,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 import com.smartcampus.security.jwt.JwtAuthEntryPoint;
 import com.smartcampus.security.jwt.JwtAuthenticationFilter;
@@ -43,13 +46,23 @@ public class SecurityConfig {
     }
 
     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("DEBUG: Initializing Security Filter Chain...");
+        
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Prioritize Auth endpoints to ensure they are permitAll() before any logic
+                .requestMatchers("/api/auth/**").permitAll()
+                
                 // Public endpoints
                 .requestMatchers("/oauth2/**", "/login/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
