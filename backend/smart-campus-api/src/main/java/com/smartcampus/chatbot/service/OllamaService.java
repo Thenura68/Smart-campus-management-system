@@ -55,9 +55,12 @@ public class OllamaService {
                 return "Sorry, I could not get a valid reply from Ollama.";
             }
 
-            Map<?, ?> message = (Map<?, ?>) body.get("message");
-            Object content = message.get("content");
+            Object messageObj = body.get("message");
+            if (!(messageObj instanceof Map<?, ?> message)) {
+                return "Sorry, Ollama returned an unexpected response.";
+            }
 
+            Object content = message.get("content");
             if (content == null) {
                 return "Sorry, Ollama returned an empty response.";
             }
@@ -66,7 +69,7 @@ public class OllamaService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error: Could not connect to local Ollama.";
+            return "Error: Could not connect to local Ollama. Make sure Ollama is running and llama3.2:latest is available.";
         }
     }
 }

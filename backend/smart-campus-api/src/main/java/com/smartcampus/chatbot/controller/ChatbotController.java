@@ -13,7 +13,7 @@ import com.smartcampus.chatbot.service.ChatbotService;
 
 @RestController
 @RequestMapping("/api/chatbot")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class ChatbotController {
 
     private final ChatbotService chatbotService;
