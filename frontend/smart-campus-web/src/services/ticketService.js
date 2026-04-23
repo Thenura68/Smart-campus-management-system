@@ -86,3 +86,16 @@ export const deleteUserTicket = async (ticketId) => {
   );
   return response.data;
 };
+
+export const getTechnicians = async () => {
+  const response = await fetch(
+    "http://localhost:8080/api/admin/tickets/technicians",
+    {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    }
+  );
+
+  return response.json();
+};
