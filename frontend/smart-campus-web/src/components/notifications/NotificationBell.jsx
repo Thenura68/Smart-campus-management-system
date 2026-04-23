@@ -8,6 +8,12 @@ function NotificationBell() {
 
   const token = localStorage.getItem("token");
 
+  const [prefs, setPrefs] = useState({
+    ticket: localStorage.getItem("notif_ticket") !== "false",
+    booking: localStorage.getItem("notif_booking") !== "false",
+  });
+    
+
   const { notifications, unreadCount, deleteNotification } = useNotifications();
 
   function timeAgo(dateString) {
@@ -27,6 +33,24 @@ function NotificationBell() {
     const days = Math.floor(hours / 24);
     return `${days} day${days > 1 ? "s" : ""} ago`;
   }
+
+  const togglePreference = (type) => {
+    const newValue = !prefs[type];
+
+    const updated = {
+      ...prefs,
+      [type]: newValue,
+    };
+
+    setPrefs(updated);
+    localStorage.setItem(`notif_${type}`, newValue);
+  };
+
+  const filteredNotifications = notifications.filter((n) => {
+    if (n.type.startsWith("TICKET") && !prefs.ticket) return false;
+    if (n.type.startsWith("BOOKING") && !prefs.booking) return false;
+    return true;
+  });
 
   return (
     <div style={{ position: "relative" }}>
@@ -53,6 +77,7 @@ function NotificationBell() {
       {/* 🔽 Dropdown */}
       {open && (
         <div
+        
           style={{
             position: "fixed",
             right: "20px",
@@ -69,6 +94,31 @@ function NotificationBell() {
             borderRadius: "12px",
           }}
         >
+
+          <div style={{ padding: "10px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+  
+            <label style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
+              🔔 Ticket Notifications
+              <input
+                type="checkbox"
+                checked={prefs.ticket}
+                onChange={() => togglePreference("ticket")}
+              />
+            </label>
+
+            <label style={{ display: "flex", justifyContent: "space-between" }}>
+              📅 Booking Notifications
+              <input
+                type="checkbox"
+                checked={prefs.booking}
+                onChange={() => togglePreference("booking")}
+              />
+            </label>
+
+          </div>
+
+
+
           {!token ? (
             <p style={{ padding: "12px", textAlign: "center", opacity: 0.6 }}>
               Login to see notifications
@@ -78,7 +128,7 @@ function NotificationBell() {
               No notifications
             </p>
           ) : (
-            notifications.slice(0, 5).map((n) => (
+            filteredNotifications.slice(0, 5).map((n) => (
               <div
                 key={n.id}
                 onClick={() => {
