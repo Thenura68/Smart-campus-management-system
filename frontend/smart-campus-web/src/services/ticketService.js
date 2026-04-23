@@ -99,3 +99,8 @@ export const getTechnicians = async () => {
 
   return response.json();
 };
+
+export const getResources = async () => {
+  const response = await api.get("/api/user/resources");
+  return response.data;
+};

@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { createTicket } from "../../services/ticketService";
+
+import { createTicket,getResources} from "../../services/ticketService";
 import "./TicketForm.css";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function TicketForm() {
   const [title, setTitle] = useState("");
@@ -13,6 +14,21 @@ function TicketForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [resources, setResources] = useState([]);
+
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const data = await getResources();
+        setResources(data);
+      } catch (error) {
+        console.error("Failed to load resources:", error);
+      }
+    };
+
+    fetchResources();
+  }, []);
+  
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -138,13 +154,19 @@ function TicketForm() {
               </div>
 
               <div className="field">
-                <label>Resource ID</label>
-                <input
-                  type="number"
-                  placeholder="Optional"
+                <label>Resource</label>
+                <select
                   value={resourceId}
                   onChange={(e) => setResourceId(e.target.value)}
-                />
+                >
+                  <option value="">Select resource (optional)</option>
+
+                  {resources.map((res) => (
+                    <option key={res.id} value={res.id}>
+                      {res.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
