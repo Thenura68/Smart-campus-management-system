@@ -19,6 +19,8 @@ import com.smartcampus.ticket.dto.TicketImageResponseDTO;
 import com.smartcampus.ticket.dto.TicketResponseDTO;
 import com.smartcampus.ticket.service.TicketImageService;
 import com.smartcampus.ticket.service.TicketService;
+import com.smartcampus.user.model.User;
+import com.smartcampus.user.service.UserService;
 
 
 @RestController
@@ -28,10 +30,13 @@ public class TicketAdminController {
 
     private final TicketService ticketService;
     private final TicketImageService ticketImageService;
+    private final UserService userService;
 
-    public TicketAdminController(TicketService ticketService, TicketImageService ticketImageService) {
+
+    public TicketAdminController(TicketService ticketService, TicketImageService ticketImageService,UserService userService) {
         this.ticketService = ticketService;
         this.ticketImageService = ticketImageService;
+         this.userService = userService;
     }
 
     @GetMapping
@@ -42,6 +47,10 @@ public class TicketAdminController {
         System.out.println("Admin ID: " + adminId + " is viewing all tickets");
         
         return ResponseEntity.ok(ticketService.getAllTickets());
+    }
+    @GetMapping("/technicians")
+    public ResponseEntity<List<User>> getAllTechnicians() {
+        return ResponseEntity.ok(userService.getAllTechnicians());
     }
 
     @PutMapping("/{id}/assign")

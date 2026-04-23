@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.smartcampus.notification.model.NotificationType;
 import com.smartcampus.notification.service.NotificationService;
+import com.smartcampus.security.roles.Role;
 import com.smartcampus.ticket.dto.TicketCreateDTO;
 import com.smartcampus.ticket.dto.TicketResponseDTO;
 import com.smartcampus.ticket.model.Ticket;
@@ -22,6 +24,8 @@ import com.smartcampus.ticket.model.TicketStatus;
 import com.smartcampus.ticket.repository.CommentRepository;
 import com.smartcampus.ticket.repository.TicketImageRepository;
 import com.smartcampus.ticket.repository.TicketRepository;
+import com.smartcampus.user.model.User;
+import com.smartcampus.user.repository.UserRepository;
 
 
 @Service
@@ -33,11 +37,15 @@ public class TicketServiceImpl implements TicketService {
     private final CommentRepository commentRepository;
     
 
-    public TicketServiceImpl(TicketRepository ticketRepository,NotificationService notificationService,TicketImageRepository ticketImageRepository,CommentRepository commentRepository) {
+    private final UserRepository userRepository;
+    
+
+    public TicketServiceImpl(TicketRepository ticketRepository,NotificationService notificationService,TicketImageRepository ticketImageRepository,CommentRepository commentRepository,UserRepository userRepository) {
         this.ticketRepository = ticketRepository;
         this.notificationService = notificationService;
         this.ticketImageRepository = ticketImageRepository;
         this.commentRepository = commentRepository;
+        this.userRepository = userRepository;
 
     }
 
@@ -58,14 +66,23 @@ public class TicketServiceImpl implements TicketService {
         Ticket savedTicket = ticketRepository.save(ticket);
 
 
-        Long adminId = 1L; // TEMPORARYYY!!
+        try {
+            Optional<User> adminOpt = userRepository.findFirstByRole(Role.ADMIN);
 
-        notificationService.createNotification(
-            adminId,
-            NotificationType.TICKET_CREATED,
-            "A new ticket has been created",
-            savedTicket.getId()
-        );
+            if (adminOpt.isPresent()) {
+                notificationService.createNotification(
+                    adminOpt.get().getId(),
+                    NotificationType.TICKET_CREATED,
+                    "A new ticket has been created",
+                    savedTicket.getId()
+                );
+            } else {
+                System.out.println("⚠️ Admin not found");
+            }
+
+        } catch (Exception e) {
+            System.out.println("⚠️ Notification failed: " + e.getMessage());
+        }
 
         return mapToResponseDTO(savedTicket);
     }

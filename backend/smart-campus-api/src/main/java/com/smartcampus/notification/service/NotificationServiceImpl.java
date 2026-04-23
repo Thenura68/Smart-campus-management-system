@@ -69,6 +69,9 @@ public class NotificationServiceImpl implements NotificationService {
             case TICKET_RESOLVED:
                 url = "/user/tickets/" + notification.getReferenceId();
                 break;
+            case BOOKING_CREATED:
+                url = "/admin/bookings";
+                break;
             default:
                 url = "/";
         }

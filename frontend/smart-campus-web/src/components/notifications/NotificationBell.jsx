@@ -6,8 +6,9 @@ function NotificationBell() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const userId = localStorage.getItem("userId");
-  const { notifications, unreadCount, deleteNotification } = useNotifications(userId);
+  const token = localStorage.getItem("token");
+
+  const { notifications, unreadCount, deleteNotification } = useNotifications();
 
   function timeAgo(dateString) {
     const now = new Date();
@@ -29,6 +30,8 @@ function NotificationBell() {
 
   return (
     <div style={{ position: "relative" }}>
+      
+      {/* 🔔 Bell */}
       <div onClick={() => setOpen(!open)} style={{ cursor: "pointer" }}>
         🔔
         {unreadCount > 0 && (
@@ -47,6 +50,7 @@ function NotificationBell() {
         )}
       </div>
 
+      {/* 🔽 Dropdown */}
       {open && (
         <div
           style={{
@@ -65,11 +69,11 @@ function NotificationBell() {
             borderRadius: "12px",
           }}
         >
-          {!userId ? (
+          {!token ? (
             <p style={{ padding: "12px", textAlign: "center", opacity: 0.6 }}>
               Login to see notifications
             </p>
-          ) : notifications.length === 0 ? (
+          ) : !notifications || notifications.length === 0 ? (
             <p style={{ padding: "12px", textAlign: "center", opacity: 0.6 }}>
               No notifications
             </p>
@@ -90,7 +94,9 @@ function NotificationBell() {
                   display: "flex",
                   gap: "10px",
                   alignItems: "flex-start",
-                  background: n.isRead ? "transparent" : "rgba(0, 140, 255, 0.08)",
+                  background: n.isRead
+                    ? "transparent"
+                    : "rgba(0, 140, 255, 0.08)",
                   cursor: "pointer",
                 }}
               >

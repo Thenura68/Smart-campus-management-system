@@ -4,6 +4,7 @@ import {
   getAllTicketsForAdmin,
   getAdminTicketImages,
   assignTechnician,
+  getTechnicians,
 } from "../../services/ticketService";
 
 import "./AdminTicketDetailsPage.css"; 
@@ -19,9 +20,11 @@ function AdminTicketDetailsPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [assignLoading, setAssignLoading] = useState(false);
+  const [technicians, setTechnicians] = useState([]);
 
   useEffect(() => {
     fetchTicketDetails();
+    fetchTechnicians();
   }, [id]);
 
   const fetchTicketDetails = async () => {
@@ -47,6 +50,15 @@ function AdminTicketDetailsPage() {
       setErrorMessage("Failed to load ticket details.");
     } finally {
       setLoading(false);
+    }
+  };
+    const fetchTechnicians = async () => {
+    try {
+      const data = await getTechnicians();
+      console.log("Technicians:", data);
+      setTechnicians(data);
+    } catch (error) {
+      console.error("Failed to fetch technicians:", error);
     }
   };
 
@@ -187,8 +199,12 @@ function AdminTicketDetailsPage() {
                   onChange={(e) => setTechnicianId(e.target.value)}
                 >
                   <option value="">Select Technician</option>
-                  <option value="3">Technician 3</option>
-                  <option value="4">Technician 4</option>
+                  
+                    {technicians.map((tech) => (
+                      <option key={tech.id} value={tech.id}>
+                        {tech.name}
+                      </option>
+                    ))}
                 </select>
 
                 <button
