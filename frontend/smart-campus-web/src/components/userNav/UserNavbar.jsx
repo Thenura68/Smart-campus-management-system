@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./UserNavbar.css";
+import NotificationBell from "../notifications/NotificationBell"; 
 
 export default function UserNavbar() {
   const { pathname } = useLocation();
@@ -63,6 +64,8 @@ export default function UserNavbar() {
         >
           Profile
         </Link>
+
+        <NotificationBell />
       </div>
     </nav>
   );

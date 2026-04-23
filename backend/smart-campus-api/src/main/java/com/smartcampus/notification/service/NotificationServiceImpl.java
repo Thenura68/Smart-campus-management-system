@@ -72,6 +72,15 @@ public class NotificationServiceImpl implements NotificationService {
             case BOOKING_CREATED:
                 url = "/admin/bookings";
                 break;
+            
+            case BOOKING_APPROVED:
+                url = "/user/bookings";
+                break;
+
+            case BOOKING_REJECTED:
+                url = "/user/bookings";
+                break;               
+            
             default:
                 url = "/";
         }

@@ -190,6 +190,14 @@ public class BookingService {
         booking.setRejectionReason(null);
         Booking updated = bookingRepository.save(booking);
         
+        notificationService.createNotification(
+            booking.getUserId(),   // IMPORTANT
+            NotificationType.BOOKING_APPROVED,
+            "Your booking #" + bookingId + " has been approved",
+            bookingId
+        );
+
+        
         return BookingResponseDTO.fromEntity(updated);
     }
     
@@ -207,6 +215,15 @@ public class BookingService {
         booking.setStatus(BookingStatus.REJECTED);
         booking.setRejectionReason(reason);
         Booking updated = bookingRepository.save(booking);
+
+
+        notificationService.createNotification(
+            booking.getUserId(),   
+            NotificationType.BOOKING_REJECTED,
+            "Your booking #" + bookingId + " was rejected: " + reason,
+            bookingId
+        );
+
         
         return BookingResponseDTO.fromEntity(updated);
     }
