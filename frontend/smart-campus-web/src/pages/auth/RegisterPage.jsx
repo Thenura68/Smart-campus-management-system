@@ -60,8 +60,6 @@ const RegisterPage = () => {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-    setServerError("");
-    setSuccessMessage("");
   };
 
   const handleSubmit = async (e) => {
@@ -79,17 +77,25 @@ const RegisterPage = () => {
         password: formData.password
       };
       
-      await register(userData);
-      setSuccessMessage("Successfully registered");
+      const response = await register(userData);
+      // Backend returns string "User registered successfully"
+      setSuccessMessage(typeof response === "string" ? response : "Successfully registered!");
       
-      // Delay redirect to allow user to see the success message
+      // Increase delay to 3 seconds so user can read the message
       setTimeout(() => {
         navigate("/login");
-      }, 1500);
+      }, 3000);
       
     } catch (error) {
       console.error("Registration error:", error);
-      setServerError(error.response?.data?.message || "Registration failed. Please try again.");
+      
+      // Properly extract message from back-end (could be string or {message: "..."})
+      const errorMessage = error.response?.data?.message || 
+                         (typeof error.response?.data === 'string' ? error.response.data : null) ||
+                         error.message ||
+                         "Registration failed. Please try again.";
+      
+      setServerError(errorMessage);
     } finally {
       setIsLoading(false);
     }

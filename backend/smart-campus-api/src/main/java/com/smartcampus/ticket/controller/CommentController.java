@@ -2,6 +2,10 @@ package com.smartcampus.ticket.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,41 +28,76 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // constructor injection
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
 
-    // add a comment
+    /**
+     * Add a comment to a ticket.
+     * Only authenticated USERs are allowed to post comments.
+     */
     @PostMapping("/ticket/{ticketId}")
-    public Comment addComment(
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Comment> addComment(
             @PathVariable Long ticketId,
-            @RequestBody CommentCreateDTO dto
+            @RequestBody CommentCreateDTO dto,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        Long currentUserId = 2L; // 🔥 temporary (later from JWT)
-        return commentService.addComment(ticketId, dto, currentUserId);
+        Long currentUserId = extractUserId(userDetails);
+        Comment comment = commentService.addComment(ticketId, dto, currentUserId);
+        return ResponseEntity.ok(comment);
     }
 
-    // get comments
+    /**
+     * Get all comments for a ticket.
+     * Both USERs and TECHNICIANs can view comments.
+     */
     @GetMapping("/ticket/{ticketId}")
-    public List<Comment> getComments(@PathVariable Long ticketId) {
-        return commentService.getCommentsByTicketId(ticketId);
-    }
-
-    // update comments
-    @PutMapping("/{commentId}")
-    public Comment updateComment(
-            @PathVariable Long commentId,
-            @RequestBody CommentUpdateDTO dto
+    @PreAuthorize("hasAnyRole('USER', 'TECHNICIAN')")
+    public ResponseEntity<List<Comment>> getComments(
+            @PathVariable Long ticketId
     ) {
-        Long currentUserId = 2L;
-        return commentService.updateComment(commentId, dto, currentUserId);
+        return ResponseEntity.ok(commentService.getCommentsByTicketId(ticketId));
     }
 
-    // delete comments
+    /**
+     * Update an existing comment.
+     * Only the USER who wrote the comment can update it (enforced in service layer).
+     */
+    @PutMapping("/{commentId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Comment> updateComment(
+            @PathVariable Long commentId,
+            @RequestBody CommentUpdateDTO dto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Long currentUserId = extractUserId(userDetails);
+        Comment updated = commentService.updateComment(commentId, dto, currentUserId);
+        return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * Delete a comment.
+     * Only the USER who wrote the comment can delete it (enforced in service layer).
+     */
     @DeleteMapping("/{commentId}")
-    public void deleteComment(@PathVariable Long commentId) {
-        Long currentUserId = 2L;
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Long currentUserId = extractUserId(userDetails);
         commentService.deleteComment(commentId, currentUserId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Extracts the numeric userId stored as the username in the JWT-backed UserDetails.
+     */
+    private Long extractUserId(UserDetails userDetails) {
+        if (userDetails == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+        return Long.parseLong(userDetails.getUsername());
     }
 }

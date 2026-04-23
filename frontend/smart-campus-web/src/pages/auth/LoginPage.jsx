@@ -51,9 +51,6 @@ const LoginPage = () => {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-
-    setServerError("");
-    setSuccessMessage("");
   };
 
   const handleSubmit = async (e) => {
@@ -109,11 +106,14 @@ const LoginPage = () => {
       
     } catch (error) {
       console.error("Login error:", error);
-      setServerError(
-        error.response?.data?.message ||
-          error.message ||
-          "Invalid email or password. Please try again."
-      );
+      
+      // Properly extract message from back-end
+      const errorMessage = error.response?.data?.message || 
+                         (typeof error.response?.data === 'string' ? error.response.data : null) ||
+                         error.message ||
+                         "Invalid email or password. Please try again.";
+                         
+      setServerError(errorMessage);
     } finally {
       setIsLoading(false);
     }

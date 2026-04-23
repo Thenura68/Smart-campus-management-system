@@ -27,9 +27,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         
         String authHeader = request.getHeader("Authorization");
+        String path = request.getRequestURI();
+        
+        System.out.println("DEBUG: JwtFilter processing path: " + path);
         
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
+            System.out.println("DEBUG: JwtFilter detected Bearer token for path: " + path);
             
             if (jwtService.validateToken(token)) {
                 Long userId = jwtService.extractUserId(token);
