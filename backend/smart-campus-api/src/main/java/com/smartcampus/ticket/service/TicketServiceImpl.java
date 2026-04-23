@@ -35,6 +35,7 @@ public class TicketServiceImpl implements TicketService {
     private final TicketImageRepository ticketImageRepository;
     private final NotificationService notificationService;
     private final CommentRepository commentRepository;
+    
 
     private final UserRepository userRepository;
     
