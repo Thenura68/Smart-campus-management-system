@@ -25,7 +25,7 @@ import com.smartcampus.user.service.UserService;
 
 @RestController
 @RequestMapping("/api/admin/tickets")
-@PreAuthorize("hasRole('ADMIN')")  // ← ADD THIS - Only ADMIN can access
+@PreAuthorize("hasRole('ADMIN')")  // Only ADMIN can access
 public class TicketAdminController {
 
     private final TicketService ticketService;
@@ -41,9 +41,9 @@ public class TicketAdminController {
 
     @GetMapping
     public ResponseEntity<List<TicketResponseDTO>> getAllTickets(
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {  // PARAMETER
         
-        Long adminId = Long.parseLong(userDetails.getUsername());  // ← Get admin ID from JWT
+        Long adminId = Long.parseLong(userDetails.getUsername());  //  Get admin ID from JWT
         System.out.println("Admin ID: " + adminId + " is viewing all tickets");
         
         return ResponseEntity.ok(ticketService.getAllTickets());
@@ -57,7 +57,7 @@ public class TicketAdminController {
     public ResponseEntity<String> assignTechnician(
             @PathVariable Long id,
             @RequestBody TicketAssignDTO dto,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {  // PARAMETER
         
         Long adminId = Long.parseLong(userDetails.getUsername());
         System.out.println("Admin ID: " + adminId + " is assigning technician to ticket " + id);
@@ -69,7 +69,7 @@ public class TicketAdminController {
     @GetMapping("/{id}/images")
     public ResponseEntity<List<TicketImageResponseDTO>> getTicketImagesForAdmin(
             @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {  // PARAMETER
         
         Long adminId = Long.parseLong(userDetails.getUsername());
         System.out.println("Admin ID: " + adminId + " is viewing images for ticket " + id);
@@ -80,7 +80,7 @@ public class TicketAdminController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTicket(
             @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {  // PARAMETER
         
         Long adminId = Long.parseLong(userDetails.getUsername());
         System.out.println("Admin ID: " + adminId + " is deleting ticket " + id);

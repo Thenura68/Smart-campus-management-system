@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartcampus.notification.dto.NotificationDTO;
-import com.smartcampus.notification.model.Notification;
 import com.smartcampus.notification.service.NotificationService;
 
 @RestController 
@@ -40,7 +39,7 @@ public class NotificationController {
     public ResponseEntity<List<NotificationDTO>> getUnreadNotifications(
             @AuthenticationPrincipal UserDetails userDetails) {
         
-        Long userId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
+        Long userId = Long.parseLong(userDetails.getUsername());  // Get user ID from JWT
         System.out.println("User ID: " + userId + " is viewing unread notifications");
         
         return ResponseEntity.ok(notificationService.getUnreadNotificationsByUserId(userId));
@@ -49,9 +48,9 @@ public class NotificationController {
     @PutMapping("/{notificationId}/read")
     public ResponseEntity<String> markNotificationAsRead(
             @PathVariable Long notificationId,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {  // PARAMETER
         
-        Long userId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
+        Long userId = Long.parseLong(userDetails.getUsername());  //  Get user ID from JWT
         System.out.println("User ID: " + userId + " is marking notification " + notificationId + " as read");
         
         notificationService.markNotificationAsRead(notificationId);
@@ -60,7 +59,7 @@ public class NotificationController {
 
     @PutMapping("/read-all")
     public ResponseEntity<String> markAllNotificationsAsRead(
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← CHANGED: No userId in URL, get from JWT
+            @AuthenticationPrincipal UserDetails userDetails) {  // CHANGED: No userId in URL, get from JWT
         
         Long userId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
         System.out.println("User ID: " + userId + " is marking all notifications as read");
@@ -71,7 +70,7 @@ public class NotificationController {
 
     @GetMapping("/unread/count")
     public ResponseEntity<Integer> getUnreadCount(
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← CHANGED: No userId in URL, get from JWT
+            @AuthenticationPrincipal UserDetails userDetails) {  // CHANGED: No userId in URL, get from JWT
         
         Long userId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
         System.out.println("User ID: " + userId + " is checking unread count");
@@ -82,9 +81,9 @@ public class NotificationController {
     @DeleteMapping("/{notificationId}")
     public ResponseEntity<String> deleteNotification(
             @PathVariable Long notificationId,
-            @AuthenticationPrincipal UserDetails userDetails) {  // ← ADD THIS PARAMETER
+            @AuthenticationPrincipal UserDetails userDetails) {  // ADD THIS PARAMETER
         
-        Long userId = Long.parseLong(userDetails.getUsername());  // ← Get user ID from JWT
+        Long userId = Long.parseLong(userDetails.getUsername());  //  Get user ID from JWT
         System.out.println("User ID: " + userId + " is deleting notification " + notificationId);
         
         notificationService.deleteNotification(notificationId);
