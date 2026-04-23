@@ -189,6 +189,8 @@ function getIcon(type) {
       return "👨‍🔧";
     case "TICKET_RESOLVED":
       return "✅";
+    case "BOOKING_REJECTED":
+      return "❌❌"
     default:
       return "🔔";
   }

@@ -18,14 +18,24 @@ function TicketDetailsPage() {
 
 
    const fetchComments = async () => {
-    try {
-      const res = await fetch(`http://localhost:8080/api/comments/ticket/${id}`);
-      const data = await res.json();
-      setComments(data);
-    } catch (error) {
-      console.error("Failed to fetch comments", error);
-    }
-  };
+      try {
+        const res = await fetch(`http://localhost:8080/api/comments/ticket/${id}`, {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+
+        if (!res.ok) {
+          throw new Error("Unauthorized or failed request");
+        }
+
+        const data = await res.json();
+        setComments(data);
+
+      } catch (error) {
+        console.error("Failed to fetch comments", error);
+      }
+    };
 
   useEffect(() => {
     fetchTicketDetails();
@@ -92,7 +102,8 @@ function TicketDetailsPage() {
       await fetch(`http://localhost:8080/api/comments/ticket/${ticket.id}`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
           message: commentText
@@ -117,7 +128,10 @@ function TicketDetailsPage() {
 
     try {
       await fetch(`http://localhost:8080/api/comments/${commentId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
       });
 
       // remove from UI instantly
