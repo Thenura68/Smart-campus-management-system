@@ -1,15 +1,24 @@
 package com.smartcampus.booking.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.smartcampus.booking.dto.BookingCreateDTO;
 import com.smartcampus.booking.dto.BookingResponseDTO;
 import com.smartcampus.booking.model.Booking;
 import com.smartcampus.booking.model.BookingStatus;
 import com.smartcampus.booking.repository.BookingRepository;
+import com.smartcampus.notification.model.NotificationType;
+import com.smartcampus.notification.service.NotificationService;
+import com.smartcampus.security.roles.Role;
+import com.smartcampus.user.model.User;
+import com.smartcampus.user.repository.UserRepository;
+
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -17,11 +26,17 @@ public class BookingService {
     
     private final BookingRepository bookingRepository;
     private final BookingConflictService conflictService;
+    private final NotificationService notificationService;
+    private final UserRepository userRepository;
     
     public BookingService(BookingRepository bookingRepository, 
-                          BookingConflictService conflictService) {
+                          BookingConflictService conflictService,
+                          NotificationService notificationService,
+                          UserRepository userRepository) {
         this.bookingRepository = bookingRepository;
         this.conflictService = conflictService;
+        this.notificationService = notificationService;
+        this.userRepository = userRepository;
     }
     
     // ========== USER OPERATIONS ==========
@@ -61,6 +76,25 @@ public class BookingService {
         );
         
         Booking saved = bookingRepository.save(booking);
+
+        try {
+            Optional<User> adminOpt = userRepository.findFirstByRole(Role.ADMIN);
+
+            if (adminOpt.isPresent()) {
+                notificationService.createNotification(
+                    adminOpt.get().getId(),
+                    NotificationType.BOOKING_CREATED,
+                    "A new booking has been created",
+                    saved.getId()
+                );
+            } else {
+                System.out.println("⚠️ Admin not found");
+            }
+
+        } catch (Exception e) {
+            System.out.println("⚠️ Notification failed: " + e.getMessage());
+        }
+
         return BookingResponseDTO.fromEntity(saved);
     }
     
