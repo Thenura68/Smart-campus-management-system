@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 
-export default function useNotifications(userId) {
+export default function useNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
   const token = localStorage.getItem("token");
 
   const fetchNotifications = async () => {
-    if (!token || !userId) {
+    if (!token) {
       setNotifications([]);
       return;
     }
 
     try {
-      const res = await fetch(`http://localhost:8080/api/notifications/${userId}`, {
+      const res = await fetch(`http://localhost:8080/api/notifications`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -35,13 +35,13 @@ export default function useNotifications(userId) {
   };
 
   const fetchUnreadCount = async () => {
-    if (!token || !userId) {
+    if (!token) {
       setUnreadCount(0);
       return;
     }
 
     try {
-      const res = await fetch(`http://localhost:8080/api/notifications/${userId}/unread/count`, {
+      const res = await fetch(`http://localhost:8080/api/notifications/unread/count`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -87,7 +87,7 @@ export default function useNotifications(userId) {
   };
 
   useEffect(() => {
-    if (!token || !userId) return;
+    if (!token) return;
 
     fetchNotifications();
     fetchUnreadCount();
@@ -98,7 +98,7 @@ export default function useNotifications(userId) {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [userId, token]);
+  }, [token]);
 
   return { notifications, unreadCount, deleteNotification };
 }
