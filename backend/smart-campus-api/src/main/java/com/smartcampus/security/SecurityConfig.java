@@ -71,6 +71,7 @@ public class SecurityConfig {
 
                 //allow access to all users to the uploads folder
                  .requestMatchers("/uploads/**").permitAll()
+                 .requestMatchers("/error").permitAll()
 
                 // Protected endpoints
                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
