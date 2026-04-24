@@ -9,14 +9,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 
 import com.smartcampus.security.jwt.JwtAuthEntryPoint;
 import com.smartcampus.security.jwt.JwtAuthenticationFilter;
@@ -72,11 +71,13 @@ public class SecurityConfig {
 
                 //allow access to all users to the uploads folder
                  .requestMatchers("/uploads/**").permitAll()
+                 .requestMatchers("/error").permitAll()
 
                 // Protected endpoints
                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/technician/**").hasRole("TECHNICIAN")
+                .requestMatchers("/api/chatbot/**").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
